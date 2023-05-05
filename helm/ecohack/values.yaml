@@ -1,0 +1,53 @@
+mysql:
+  enabled: true
+
+  image:
+    repository: mysql
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  mysqlRootPassword: "true"
+  mysqlDatabase: springbootdb
+  mysqlUser: usr_application
+  mysqlPassword: usr_password
+
+backend:
+  image:
+    repository: registry.gitlab.com/ecohack-2023-lhind-tia-hackathon/organizers/ecohack-template
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "backend"
+
+  containerPorts:
+    - name: http
+      containerPort: 8080
+      protocol: TCP
+
+  resources:
+    limits:
+      cpu: 150m
+      memory: 512Mi
+    requests:
+      cpu: 75m
+      memory: 256Mi
+
+frontend:
+  image:
+    repository: registry.gitlab.com/ecohack-2023-lhind-tia-hackathon/organizers/ecohack-template
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: "frontend"
+
+  containerPorts:
+    - name: http
+      containerPort: 80
+      protocol: TCP
+
+  resources:
+    limits:
+      cpu: 150m
+      memory: 512Mi
+    requests:
+      cpu: 75m
+      memory: 256Mi

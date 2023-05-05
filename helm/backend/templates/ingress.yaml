@@ -1,0 +1,42 @@
+{{- $fullName := include "backend.fullname" . -}}
+{{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
+  {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
+  {{- $_ := set .Values.ingress.annotations "kubernetes.io/ingress.class" .Values.ingress.className}}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1beta1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: backend-ingress
+  labels:
+    {{- include "backend.labels" . | nindent 4 }}
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+  {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: "nginx"
+  tls:
+    - hosts:
+        - backend-{{ .Release.Namespace }}.lhindtia-devenv.com
+      secretName: backend-{{ .Release.Namespace }}-tls
+  rules:
+    - host:  backend-{{ .Release.Namespace }}.lhindtia-devenv.com
+      http:
+        paths:
+          {{- range $index, $port := .Values.containerPorts }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: {{ required "Missing required ports[].containerPort entry" $port.containerPort }}
+          {{- end }}

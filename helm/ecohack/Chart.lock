@@ -1,0 +1,12 @@
+dependencies:
+- name: backend
+  repository: file://../backend
+  version: 0.1.0
+- name: frontend
+  repository: file://../frontend
+  version: 0.1.0
+- name: mysql
+  repository: file://../mysql
+  version: 0.1.0
+digest: sha256:6cbc978043011d78d4ef45704144aeb18ecade8a3299c2746ef008a63690e5e7
+generated: "2023-05-03T23:57:15.136926804+02:00"
