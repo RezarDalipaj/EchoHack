@@ -99,5 +99,5 @@ deploy-job:      # This job runs in the deploy stage.
   script:
     - echo "Deploying application..."
     - helm dep update ./helm/ecohack
-    - helm upgrade ${APP_NAME} ./helm/ecohack --install --values=./helm/ecohack/values.yaml --namespace ${NAMESPACE}
+    - helm upgrade ${APP_NAME} ./helm/ecohack --install --values=./helm/ecohack/values.yaml --namespace ${NAMESPACE} --set backend.image.repository=$CI_REGISTRY_IMAGE --set frontend.image.repository=$CI_REGISTRY_IMAGE
     - echo "Application successfully deployed."
