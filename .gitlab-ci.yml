@@ -69,8 +69,6 @@ build-frontend-app:
     - frontend-code-quality
 
 docker image:
-  tags:
-    - organizers
   image: docker:20.10.16
   services:
   - name: docker:20.10.16-dind
