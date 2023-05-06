@@ -6,6 +6,7 @@ import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,6 +36,7 @@ public class MealController {
     }
 
     @GetMapping("/provider")
+    @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
     public ResponseEntity<List<MealDto>> findAllByProviderId(@RequestParam int pageSize, @RequestParam int pageNumber, HttpServletRequest request){
         return ResponseEntity.ok(mealService.findAllByProviderUsername(tokenUtil.usernameFromToken(request), pageSize, pageNumber));
     }
