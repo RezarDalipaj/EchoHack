@@ -80,25 +80,29 @@ public class MealService implements IMealService {
         meal.setName(mealDto.getName());
 
         List<Ingredient> ingredients = new ArrayList<>();
-        for (IngredientDto ingredientDto : mealDto.getIngredients()){
-            Optional<Ingredient> ingredientOptional = ingredientRepository.findById(ingredientDto.getId());
-            ingredientOptional.ifPresent(ingredients::add);
+        if (!mealDto.getIngredients().isEmpty()) {
+            for (IngredientDto ingredientDto : mealDto.getIngredients()) {
+                Optional<Ingredient> ingredientOptional = ingredientRepository.findById(ingredientDto.getId());
+                ingredientOptional.ifPresent(ingredients::add);
+            }
+
+            Integer totalPoints = getTotalPoints(ingredients);
+            meal.setTotalPoints(totalPoints);
         }
 
-        Integer totalPoints = getTotalPoints(ingredients);
-
         List<Nutrition> nutritions = new ArrayList<>();
-        for (NutritionDto nutritionDto : mealDto.getNutritions()){
-            if (nutritionDto.getName() != null && nutritionDto.getAmount() != null){
-                Nutrition nutrition = new Nutrition();
-                nutrition.setName(nutritionDto.getName());
-                nutrition.setMeal(meal);
-                nutrition.setAmount(nutritionDto.getAmount());
-                nutritions.add(nutrition);
+        if (!mealDto.getNutritions().isEmpty()) {
+            for (NutritionDto nutritionDto : mealDto.getNutritions()) {
+                if (nutritionDto.getName() != null && nutritionDto.getAmount() != null) {
+                    Nutrition nutrition = new Nutrition();
+                    nutrition.setName(nutritionDto.getName());
+                    nutrition.setMeal(meal);
+                    nutrition.setAmount(nutritionDto.getAmount());
+                    nutritions.add(nutrition);
+                }
             }
         }
 
-        meal.setTotalPoints(totalPoints);
         meal.setIngredients(ingredients);
         meal.setNutritions(nutritions);
 
