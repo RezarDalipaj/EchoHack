@@ -59,13 +59,17 @@ public class MealService implements IMealService {
 
     @Override
     public MealDto findById(Long id) {
+        return mealMapper.toMealdDto(findEntityById(id));
+    }
+
+    @Override
+    public Meal findEntityById(Long id) {
         Optional<Meal> mealOptional = mealRepository.findById(id);
         if (mealOptional.isPresent()){
-            return mealMapper.toMealdDto(mealOptional.get());
+            return mealOptional.get();
         } else {
             throw new NullPointerException("Meal with id: " + id + " does not exist");
         }
-
     }
 
     @Override

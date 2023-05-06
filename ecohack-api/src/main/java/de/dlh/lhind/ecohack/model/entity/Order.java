@@ -12,12 +12,16 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "`order`")
+@Setter
+@Getter
 public class Order {
 
     @Id
@@ -34,10 +38,6 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client client;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "provider_id")
-    private FoodProvider foodProvider;
 
     @ManyToMany(mappedBy = "orders", fetch = FetchType.EAGER)
     private List<Meal> meals;

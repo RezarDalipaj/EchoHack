@@ -1,11 +1,11 @@
 package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
-import de.dlh.lhind.ecohack.security.config.JwtTokenUtil;
 import de.dlh.lhind.ecohack.service.IOrderService;
+import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,17 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final IOrderService orderService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final TokenUtil tokenUtil;
 
     @PostMapping
-    public ResponseEntity<OrderDto> saveOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) throws Exception{
-        String username = usernameFromToken(request);
+    @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
+    public void saveOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) throws Exception{
+        String username = tokenUtil.usernameFromToken(request);
         orderDto.setUsername(username);
-        return ResponseEntity.ok(orderService.save(orderDto));
-    }
-
-    private String usernameFromToken(HttpServletRequest request){
-        String token = request.getHeader("Authorization").substring(7);
-        return jwtTokenUtil.getUsernameFromToken(token);
+        orderService.save(orderDto);
     }
 }

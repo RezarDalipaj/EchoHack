@@ -1,7 +1,8 @@
 package de.dlh.lhind.ecohack.service;
 
+import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
 
 public interface IOrderService {
-    OrderDto save(OrderDto orderDto);
+    void save(OrderDto orderDto) throws BadRequestException;
 }

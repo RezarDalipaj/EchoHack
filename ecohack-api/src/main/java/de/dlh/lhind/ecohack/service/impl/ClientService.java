@@ -6,6 +6,7 @@ import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
+import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.enumeration.Answers;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
@@ -119,7 +120,15 @@ public class ClientService implements IClientService {
 
     @Override
     public ClientDto findByUsername(String username) {
-        return null;
+        return clientMapper.clientToDto(findClientByUsername(username));
+    }
+
+    @Override
+    public Client findClientByUsername(String username) {
+        var client = clientRepository.findByUser_Email(username);
+        if (client.isEmpty())
+            throw new NullPointerException("Client not found");
+        return client.get();
     }
 
     private void validateRegister(ClientDto clientDto) throws BadRequestException {

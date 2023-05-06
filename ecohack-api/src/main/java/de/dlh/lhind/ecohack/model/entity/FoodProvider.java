@@ -40,11 +40,5 @@ public class FoodProvider{
     @Column
     private Long longtitude;
 
-    @OneToMany(
-            mappedBy = "foodProvider",
-            cascade = CascadeType.ALL
-    )
-    private List<Order> orderList;
-
 
 }

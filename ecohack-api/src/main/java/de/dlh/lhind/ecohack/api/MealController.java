@@ -31,5 +31,4 @@ public class MealController {
         return ResponseEntity.ok(mealService.save(meal));
     }
 
-
 }

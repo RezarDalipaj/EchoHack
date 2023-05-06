@@ -7,5 +7,4 @@ import lombok.Setter;
 @Setter
 public class OrderMealDto {
     private Long mealId;
-    private Integer quantity;
 }
