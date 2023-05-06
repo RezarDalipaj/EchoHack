@@ -81,7 +81,7 @@ public class MealService implements IMealService {
     }
 
     @Override
-    public MealDto save(MealDto mealDto) {
+    public MealDto save(MealDto mealDto, String username) {
         Meal meal = new Meal();
 
         if (mealDto.getName() == null){

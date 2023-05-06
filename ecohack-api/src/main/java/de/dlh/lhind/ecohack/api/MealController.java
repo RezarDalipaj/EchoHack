@@ -31,8 +31,8 @@ public class MealController {
     }
 
     @PostMapping()
-    public ResponseEntity<MealDto> save(@RequestBody MealDto meal){
-        return ResponseEntity.ok(mealService.save(meal));
+    public ResponseEntity<MealDto> save(@RequestBody MealDto meal, HttpServletRequest request){
+        return ResponseEntity.ok(mealService.save(meal, tokenUtil.usernameFromToken(request)));
     }
 
     @GetMapping("/provider")

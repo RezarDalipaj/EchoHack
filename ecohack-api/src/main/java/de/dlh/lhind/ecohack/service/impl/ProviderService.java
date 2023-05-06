@@ -5,6 +5,7 @@ import de.dlh.lhind.ecohack.mapper.ProviderMapper;
 import de.dlh.lhind.ecohack.model.dto.ProviderDto;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
+import de.dlh.lhind.ecohack.model.entity.FoodProvider;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.FoodProviderRepository;
 import de.dlh.lhind.ecohack.service.IAuthService;
@@ -35,6 +36,14 @@ public class ProviderService implements IProviderService {
         login.setUsername(providerDto.getUsername());
         login.setPassword(providerDto.getPassword());
         return authService.login(login);
+    }
+
+    @Override
+    public FoodProvider findByEmail(String email) {
+        var provider = providerRepository.findByUser_Email(email);
+        if (provider == null)
+            throw new NullPointerException("Provider doesnt exist");
+        return provider;
     }
 
     private void validateProvider(ProviderDto providerDto) throws BadRequestException {

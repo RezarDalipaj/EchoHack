@@ -2,6 +2,8 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.service.IIngredientService;
+import de.dlh.lhind.ecohack.util.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IngredientController {
     private final IIngredientService ingredientService;
+    private final TokenUtil tokenUtil;
 
 
     @GetMapping()
@@ -22,7 +25,7 @@ public class IngredientController {
 
     @PostMapping()
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
-    public ResponseEntity<IngredientDto> save(@RequestBody IngredientDto ingredientDto){
-        return ResponseEntity.ok(ingredientService.save(ingredientDto));
+    public ResponseEntity<IngredientDto> save(@RequestBody IngredientDto ingredientDto, HttpServletRequest request){
+        return ResponseEntity.ok(ingredientService.save(ingredientDto, tokenUtil.usernameFromToken(request)));
     }
 }

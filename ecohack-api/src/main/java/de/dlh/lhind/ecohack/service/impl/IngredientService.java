@@ -17,7 +17,7 @@ public class IngredientService implements IIngredientService {
     private final IngredientRepository ingredientRepository;
     private final IngredientMapper ingredientMapper;
     @Override
-    public IngredientDto save(IngredientDto ingredient) {
+    public IngredientDto save(IngredientDto ingredient, String username) {
         Optional<Ingredient> ingredientOptional = ingredientRepository.findByName(ingredient.getName());
         if (ingredientOptional.isPresent()){
             ingredientOptional.get().setPoints(ingredient.getPoints());

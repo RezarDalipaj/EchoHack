@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface FoodProviderRepository extends JpaRepository<FoodProvider, Long> {
     boolean existsByName(String name);
     boolean existsByNipt(String nipt);
+    FoodProvider findByUser_Email(String email);
 }
