@@ -13,6 +13,7 @@ import de.dlh.lhind.ecohack.repository.IngredientRepository;
 import de.dlh.lhind.ecohack.repository.MealRepository;
 import de.dlh.lhind.ecohack.repository.NutritionRepository;
 import de.dlh.lhind.ecohack.service.IMealService;
+import de.dlh.lhind.ecohack.service.IProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,9 +34,8 @@ public class MealService implements IMealService {
 
     private final MealRepository mealRepository;
     private final IngredientRepository ingredientRepository;
-    private final NutritionRepository nutritionRepository;
     private final ClientService clientService;
-    private final TagMapper tagMapper;
+    private final IProviderService providerService;
     private final MealMapper mealMapper;
 
 
@@ -82,14 +82,16 @@ public class MealService implements IMealService {
 
     @Override
     public MealDto save(MealDto mealDto, String username) {
+        var provider = providerService.findByEmail(username);
         Meal meal = new Meal();
-
+        meal.setFoodProvider(provider);
         if (mealDto.getName() == null){
             throw new NullPointerException("Meal name is null");
         }
         if (mealDto.getPrice() == null){
             throw new NullPointerException("Meal price is null");
         }
+
 
         meal.setName(mealDto.getName());
         meal.setPrice(mealDto.getPrice());
