@@ -46,6 +46,12 @@ public class MealService implements IMealService {
         return mealMapper.toMealDtoList(mealRepository.findByTotalPointsBetween(min, max, pageable));
     }
 
+    @Override
+    public List<MealDto> findAllByProviderUsername(String username, int pageSize, int pageNumber) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return mealMapper.toMealDtoList(mealRepository.findAllByFoodProvider_User_Email(username, pageable));
+    }
+
 
     @Override
     public Void uploadImage(MultipartFile image, Long mealId) throws IOException {

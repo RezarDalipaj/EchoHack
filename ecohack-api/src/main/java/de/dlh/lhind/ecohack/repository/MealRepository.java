@@ -13,5 +13,6 @@ import java.util.List;
 public interface MealRepository extends JpaRepository<Meal, Long> {
 
     List<Meal> findByTotalPointsBetween(int minPoints, int maxPoints, Pageable pageable);
+    List<Meal> findAllByFoodProvider_User_Email(String email, Pageable pageable);
 
 }
