@@ -13,7 +13,7 @@ import org.mapstruct.NullValueMappingStrategy;
 @Mapper(componentModel = "spring",
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
-        uses = MapperHelper.class)
+        uses = MappingHelper.class)
 public interface UserMapper{
     UserDto userToDto(User user);
     @Mapping(source = "user.email", target = "email")

@@ -39,7 +39,7 @@ public class Order {
     @JoinColumn(name = "provider_id")
     private FoodProvider foodProvider;
 
-    @ManyToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "orders", fetch = FetchType.EAGER)
     private List<Meal> meals;
 
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

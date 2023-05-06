@@ -4,6 +4,7 @@ import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
 import de.dlh.lhind.ecohack.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +30,7 @@ public class JwtUserDetailsService implements IJwtUserDetailsService {
         return new User(user.getEmail(), user.getPassword(), authorityCollection);
     }
 
-    public ClientDto save(ClientDto user) throws Exception {
+    public ClientDto save(ClientDto user) {
         return userService.save(user);
     }
 }

@@ -1,11 +1,13 @@
 spring:
+  main:
+    allow-circular-references: true
   application:
     name: ecohack-template
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/springbootdb
+    url: jdbc:mysql://localhost:3306/springbootdb?createDatabaseIfNotExist=true
     username: usr_application
     password: usr_password
 

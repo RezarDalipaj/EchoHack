@@ -1,6 +1,6 @@
 package de.dlh.lhind.ecohack.model.entity;
 
-import com.example.ecofood.domain.enumeration.PaymentMethod;
+import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

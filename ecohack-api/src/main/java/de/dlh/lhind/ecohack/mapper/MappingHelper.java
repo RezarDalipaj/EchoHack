@@ -2,10 +2,10 @@ package de.dlh.lhind.ecohack.mapper;
 
 import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
-@UtilityClass
-public class MapperHelper {
+@Component
+public final class MappingHelper {
 
     String mapRoleToString(Role role){
         return role == null ? null : role.toString();
