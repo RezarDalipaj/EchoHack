@@ -9,5 +9,6 @@ import lombok.Setter;
 @Builder
 public class IngredientDto {
     private Long id;
+    private Integer points;
     private String name;
 }

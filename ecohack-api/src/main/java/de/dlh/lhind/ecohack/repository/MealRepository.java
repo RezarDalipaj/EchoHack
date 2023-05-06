@@ -13,5 +13,6 @@ import java.util.List;
 public interface MealRepository extends JpaRepository<Meal, Long> {
 
     List<Meal> findAllByTags(List<Tag> tags, Pageable pageable);
+    List<Meal> findByTargetClientPointsBetween(int minPoints, int maxPoints, Pageable pageable);
 
 }

@@ -1,13 +1,14 @@
 package de.dlh.lhind.ecohack.api;
 
-import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.model.dto.TagDto;
 import de.dlh.lhind.ecohack.service.impl.MealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,4 +21,16 @@ public class MealController {
     public ResponseEntity<List<MealDto>> findAllByTags(@RequestBody List<TagDto> tags, @RequestParam int pageSize, @RequestParam int pageNumber){
         return ResponseEntity.ok(mealService.findAllByTags(tags, pageSize, pageNumber));
     }
+
+    @GetMapping()
+    public ResponseEntity<List<MealDto>> findAllByClientId(@RequestParam String username, @RequestParam int pageSize, @RequestParam int pageNumber){
+        return ResponseEntity.ok(mealService.findAllByClientUsername(username, pageSize, pageNumber));
+    }
+    @PutMapping()
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image, @RequestParam Long mealId) throws IOException {
+        mealService.uploadImage(image, mealId);
+        return ResponseEntity.ok().body(null);
+    }
+
+
 }

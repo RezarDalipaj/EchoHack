@@ -16,4 +16,5 @@ public class ClientDto extends LoginDto {
     private Long latitude;
     private Long longtitude;
     private String paymentMethod;
+    private Integer rankingPoints;
 }
