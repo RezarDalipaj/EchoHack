@@ -2,6 +2,7 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.model.dto.TagDto;
+import de.dlh.lhind.ecohack.service.IMealService;
 import de.dlh.lhind.ecohack.service.impl.MealService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,7 @@ import java.util.List;
 @RequestMapping("/meal")
 @RequiredArgsConstructor
 public class MealController {
-    private final MealService mealService;
-
+    private final IMealService mealService;
 
     @GetMapping()
     public ResponseEntity<List<MealDto>> findAllByClientId(@RequestParam String username, @RequestParam int pageSize, @RequestParam int pageNumber){

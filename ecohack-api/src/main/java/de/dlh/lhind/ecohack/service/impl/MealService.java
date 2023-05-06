@@ -109,10 +109,14 @@ public class MealService implements IMealService {
 
     private Integer getTotalPoints(List<Ingredient> ingredients){
         Integer totalPoints = 0;
+        if (ingredients.isEmpty()){
+            return totalPoints;
+        }
+
         for (Ingredient ingredient : ingredients){
             totalPoints += ingredient.getPoints();
         }
-        return totalPoints;
+        return totalPoints/ingredients.size();
     }
 
 
