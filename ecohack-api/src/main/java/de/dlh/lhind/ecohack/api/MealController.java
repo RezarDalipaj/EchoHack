@@ -26,5 +26,4 @@ public class MealController {
         return ResponseEntity.ok().body(null);
     }
 
-
 }
