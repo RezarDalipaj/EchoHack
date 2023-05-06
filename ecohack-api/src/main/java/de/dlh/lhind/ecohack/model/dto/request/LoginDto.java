@@ -1,6 +1,5 @@
 package de.dlh.lhind.ecohack.model.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 

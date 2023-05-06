@@ -16,11 +16,11 @@ import org.mapstruct.NullValueMappingStrategy;
         uses = MappingHelper.class)
 public interface UserMapper{
     UserDto userToDto(User user);
-    @Mapping(source = "user.email", target = "email")
+    @Mapping(source = "user.email", target = "username")
     @Mapping(source = "user.password", target = "password")
     ClientDto clientToDto(Client client);
 
-    @Mapping(target = "user.email", source = "email")
+    @Mapping(target = "user.email", source = "username")
     @Mapping(target = "user.password", source = "password")
     Client dtoToClient(ClientDto clientDto);
 }
