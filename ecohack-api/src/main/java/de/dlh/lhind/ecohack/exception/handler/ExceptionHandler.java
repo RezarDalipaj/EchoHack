@@ -17,7 +17,7 @@ public class ExceptionHandler {
         if (nullPointerException.getMessage() == null)
             errorDto.setMessage(Constants.NOT_FOUND_MESSAGE);
         else
-            errorDto.setMessage(nullPointerException.getMessage() + " NOT FOUND");
+            errorDto.setMessage(nullPointerException.getMessage());
         errorDto.setStatus(HttpStatus.NOT_FOUND);
         return  ResponseEntity.status(404).body(errorDto);
     }

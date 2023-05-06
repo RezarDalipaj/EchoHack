@@ -2,6 +2,8 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.service.IMealService;
+import de.dlh.lhind.ecohack.util.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -16,8 +16,8 @@ import java.util.List;
 public class TestController {
     private final IUserService userService;
 
-    @GetMapping("/all/clients")
-    public ResponseEntity<List<User>> saveClient(){
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getUsers(){
         return ResponseEntity.ok(userService.findAll());
     }
 }

@@ -25,6 +25,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
 @Service
 @RequiredArgsConstructor
 public class MealService implements IMealService {
@@ -84,7 +86,7 @@ public class MealService implements IMealService {
         meal.setName(mealDto.getName());
 
         List<Ingredient> ingredients = new ArrayList<>();
-        if (!mealDto.getIngredients().isEmpty()) {
+        if (isNotEmpty(mealDto.getIngredients())) {
             for (IngredientDto ingredientDto : mealDto.getIngredients()) {
                 Optional<Ingredient> ingredientOptional = ingredientRepository.findById(ingredientDto.getId());
                 ingredientOptional.ifPresent(ingredients::add);
@@ -95,7 +97,7 @@ public class MealService implements IMealService {
         }
 
         List<Nutrition> nutritions = new ArrayList<>();
-        if (!mealDto.getNutritions().isEmpty()) {
+        if (isNotEmpty(mealDto.getNutritions())) {
             for (NutritionDto nutritionDto : mealDto.getNutritions()) {
                 if (nutritionDto.getName() != null && nutritionDto.getAmount() != null) {
                     Nutrition nutrition = new Nutrition();

@@ -10,7 +10,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Builder
 public class OrderDto {
     private Long id;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
