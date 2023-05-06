@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FoodProviderRepository extends JpaRepository<FoodProvider, Long> {
+    boolean existsByName(String name);
+    boolean existsByNipt(String nipt);
 }

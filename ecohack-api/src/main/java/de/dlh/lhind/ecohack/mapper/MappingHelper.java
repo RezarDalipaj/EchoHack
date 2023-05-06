@@ -27,6 +27,6 @@ public final class MappingHelper {
             if (payment.toString().equals(paymentMethod))
                 return payment;
         }
-        return null;
+        return PaymentMethod.CASH;
     }
 }

@@ -1,13 +1,11 @@
 package de.dlh.lhind.ecohack.model.dto;
 
-import lombok.Builder;
+import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
-public class UserDto {
-    private String email;
+public class UserDto extends LoginDto {
     private String role;
 }

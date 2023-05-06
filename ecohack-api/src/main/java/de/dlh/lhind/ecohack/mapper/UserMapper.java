@@ -15,5 +15,6 @@ import org.mapstruct.NullValueMappingStrategy;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
         uses = MappingHelper.class)
 public interface UserMapper{
+    @Mapping(source = "email", target = "username")
     UserDto userToDto(User user);
 }

@@ -1,22 +1,30 @@
 package de.dlh.lhind.ecohack.service.impl;
 
+import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.mapper.ClientMapper;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
+import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
-import de.dlh.lhind.ecohack.model.entity.Client;
+import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.enumeration.Answers;
+import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
+import de.dlh.lhind.ecohack.service.IAuthService;
 import de.dlh.lhind.ecohack.service.IClientService;
+import de.dlh.lhind.ecohack.service.IUserService;
+import de.dlh.lhind.ecohack.service.IValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ClientService implements IClientService {
 
     private final ClientRepository clientRepository;
+    private final IAuthService authService;
+    private final IUserService userService;
+    private final IValidationService validationService;
     private final ClientMapper clientMapper;
 
     @Override
@@ -78,6 +86,23 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    public Integer saveClientPoints(QuestionnaireDto questionnaire, Long clientId) {
+        return null;
+    }
+
+    @Override
+    public TokenDto save(ClientDto clientDto) throws BadRequestException {
+        validateRegister(clientDto);
+        var client = clientMapper.dtoToClient(clientDto);
+        var user = client.getUser();
+        client.setUser(userService.save(user, Role.CLIENT));
+        clientRepository.save(client);
+        var login = new LoginDto();
+        login.setUsername(clientDto.getUsername());
+        login.setPassword(clientDto.getPassword());
+        return authService.login(login);
+    }
+    @Override
     public Integer getPoints(String username) {
         ClientDto client = findByUsername(username);
         if (client.getRankingPoints() != null){
@@ -89,23 +114,16 @@ public class ClientService implements IClientService {
 
     @Override
     public ClientDto findById(Long clientId) {
-        Optional<Client> clientOptional = clientRepository.findById(clientId);
-        if (clientOptional.isPresent()){
-            return clientMapper.clientToDto(clientOptional.get());
-        } else {
-            throw new NullPointerException("Client with id: " + clientId + " was not found");
-        }
+        return null;
     }
 
     @Override
     public ClientDto findByUsername(String username) {
-        Optional<Client> clientOptional = clientRepository.findByUser_Email(username);
-        if (clientOptional.isPresent()){
-            return clientMapper.clientToDto(clientOptional.get());
-        } else {
-            throw new NullPointerException("Client with email: " + username + " was not found");
-        }
+        return null;
     }
 
+    private void validateRegister(ClientDto clientDto) throws BadRequestException {
+        validationService.validateUsername(clientDto.getUsername());
+    }
 
 }

@@ -30,7 +30,6 @@ public class AuthService implements IAuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(username);
-
         return tokenProvider.generateToken(userDetails);
     }
 }

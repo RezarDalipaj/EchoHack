@@ -1,12 +1,9 @@
 package de.dlh.lhind.ecohack.service.impl;
 
-import de.dlh.lhind.ecohack.mapper.ClientMapper;
 import de.dlh.lhind.ecohack.mapper.UserMapper;
-import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
-import de.dlh.lhind.ecohack.repository.ClientRepository;
 import de.dlh.lhind.ecohack.repository.UserRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository userRepository;
-    private final ClientRepository clientRepository;
     private final UserMapper userMapper;
-    private final ClientMapper clientMapper;
     private final PasswordEncoder bcryptEncoder;
 
     @Override
@@ -39,19 +34,16 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ClientDto save(ClientDto clientDto) {
-        var client = clientMapper.dtoToClient(clientDto);
-        var user = client.getUser();
-        user.setPassword(bcryptEncoder.encode(user.getPassword()));
-        user.setRole(Role.CLIENT);
-        userRepository.save(user);
-        client.setUser(user);
-        clientRepository.save(client);
-        return clientMapper.clientToDto(client);
-    }
-
-    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    @Override
+    public User save(User user, Role role){
+        user.setPassword(bcryptEncoder.encode(user.getPassword()));
+        user.setRole(role);
+        userRepository.save(user);
+        return user;
+    }
+
 }
