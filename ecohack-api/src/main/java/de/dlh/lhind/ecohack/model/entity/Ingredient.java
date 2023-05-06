@@ -8,11 +8,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "ingredient")
+@Getter
+@Setter
 public class Ingredient {
 
     @Id
@@ -22,6 +26,9 @@ public class Ingredient {
 
     @Column(name = "name")
     private String name;
+
+    @Column(name = "points")
+    private Integer points;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Meal> meals;
