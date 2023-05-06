@@ -12,7 +12,6 @@ public class LoginDto implements Serializable {
 
     private static final long serialVersionUID = 5926468583005150707L;
 
-    private String email;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String username;
     private String password;
 }
