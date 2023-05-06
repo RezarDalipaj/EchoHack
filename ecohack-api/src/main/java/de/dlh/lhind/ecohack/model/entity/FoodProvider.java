@@ -44,6 +44,12 @@ public class FoodProvider{
             mappedBy = "foodProvider",
             cascade = CascadeType.ALL
     )
+    private List<Meal> mealList;
+
+    @OneToMany(
+            mappedBy = "foodProvider",
+            cascade = CascadeType.ALL
+    )
     private List<Order> orderList;
 
 

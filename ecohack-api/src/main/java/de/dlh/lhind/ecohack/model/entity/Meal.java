@@ -33,6 +33,10 @@ public class Meal {
     )
     private List<Nutrition> nutritions;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "provider_id")
+    private FoodProvider foodProvider;
+
     @OneToMany(
             mappedBy = "meal",
             cascade = CascadeType.ALL
