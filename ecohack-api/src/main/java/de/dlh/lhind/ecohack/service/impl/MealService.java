@@ -83,7 +83,16 @@ public class MealService implements IMealService {
     @Override
     public MealDto save(MealDto mealDto) {
         Meal meal = new Meal();
+
+        if (mealDto.getName() == null){
+            throw new NullPointerException("Meal name is null");
+        }
+        if (mealDto.getPrice() == null){
+            throw new NullPointerException("Meal price is null");
+        }
+
         meal.setName(mealDto.getName());
+        meal.setPrice(mealDto.getPrice());
 
         List<Ingredient> ingredients = new ArrayList<>();
         if (isNotEmpty(mealDto.getIngredients())) {
