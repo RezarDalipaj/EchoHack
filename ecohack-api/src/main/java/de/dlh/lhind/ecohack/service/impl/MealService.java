@@ -32,11 +32,6 @@ public class MealService implements IMealService {
     private final TagMapper tagMapper;
     private final MealMapper mealMapper;
 
-    @Override
-    public List<MealDto> findAllByTags(List<TagDto> tags, int pageSize, int pageNumber) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return mealMapper.toMealDtoList(mealRepository.findAllByTags(tagMapper.toTagList(tags), pageable));
-    }
 
     @Override
     public List<MealDto> findAllByClientUsername(String username, int pageSize, int pageNumber) {
@@ -44,7 +39,7 @@ public class MealService implements IMealService {
         int min = rankingPoints - 10;
         int max = rankingPoints + 10;
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return mealMapper.toMealDtoList(mealRepository.findByTargetClientPointsBetween(min, max, pageable));
+        return mealMapper.toMealDtoList(mealRepository.findByTotalPointsBetween(min, max, pageable));
     }
 
 
@@ -82,7 +77,16 @@ public class MealService implements IMealService {
                 ingredientOptional.ifPresent(ingredients::add);
             }
 
+            Integer totalPoints = null;
+
             meal.setIngredients(ingredients);
+        }
+        return null;
+    }
+
+    private Void getTotalPoints(List<Ingredient> ingredients){
+        Integer totalPoints = 0;
+        for (Ingredient ingredient : ingredients){
         }
         return null;
     }

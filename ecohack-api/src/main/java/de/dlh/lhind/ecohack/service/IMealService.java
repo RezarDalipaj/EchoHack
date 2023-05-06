@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface IMealService {
 
-    public List<MealDto> findAllByTags(List<TagDto> tags, int pageSize, int pageNumber);
     public List<MealDto> findAllByClientUsername(String username, int pageSize, int pageNumber);
     public Void uploadImage(MultipartFile image, Long mealId) throws IOException;
     public MealDto findById(Long id);

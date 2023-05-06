@@ -15,6 +15,6 @@ public interface MealMapper {
 
     MealDto toMealdDto(Meal meal);
     List<MealDto> toMealDtoList(List<Meal> meals);
-    Meal toMeal(MealDto meal);
-    List<Meal> toMealList(List<MealDto> meal);
+//    Meal toMeal(MealDto meal);
+//    List<Meal> toMealList(List<MealDto> meal);
 }

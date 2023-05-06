@@ -17,10 +17,6 @@ import java.util.List;
 public class MealController {
     private final MealService mealService;
 
-    @GetMapping()
-    public ResponseEntity<List<MealDto>> findAllByTags(@RequestBody List<TagDto> tags, @RequestParam int pageSize, @RequestParam int pageNumber){
-        return ResponseEntity.ok(mealService.findAllByTags(tags, pageSize, pageNumber));
-    }
 
     @GetMapping()
     public ResponseEntity<List<MealDto>> findAllByClientId(@RequestParam String username, @RequestParam int pageSize, @RequestParam int pageNumber){
