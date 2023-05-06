@@ -83,8 +83,13 @@ public class MealService implements IMealService {
 
         List<Nutrition> nutritions = new ArrayList<>();
         for (NutritionDto nutritionDto : mealDto.getNutritions()){
-            Optional<Nutrition> nutritionOptional = nutritionRepository.findById(nutritionDto.getId());
-            nutritionOptional.ifPresent(nutritions::add);
+            if (nutritionDto.getName() != null && nutritionDto.getAmount() != null){
+                Nutrition nutrition = new Nutrition();
+                nutrition.setName(nutritionDto.getName());
+                nutrition.setMeal(meal);
+                nutrition.setAmount(nutritionDto.getAmount());
+                nutritions.add(nutrition);
+            }
         }
 
         meal.setTotalPoints(totalPoints);
