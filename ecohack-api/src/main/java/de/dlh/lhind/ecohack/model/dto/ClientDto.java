@@ -13,6 +13,7 @@ public class ClientDto extends LoginDto {
     private String role;
     private String name;
     private String surname;
-    private String address;
+    private Long latitude;
+    private Long longtitude;
     private String paymentMethod;
 }

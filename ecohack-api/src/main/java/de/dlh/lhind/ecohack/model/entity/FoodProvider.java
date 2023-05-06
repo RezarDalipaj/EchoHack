@@ -30,6 +30,12 @@ public class FoodProvider{
     @Column(name = "nipt")
     private String nipt;
 
+    @Column
+    private Long latitude;
+
+    @Column
+    private Long longtitude;
+
     @OneToMany(
             mappedBy = "foodProvider",
             cascade = CascadeType.ALL

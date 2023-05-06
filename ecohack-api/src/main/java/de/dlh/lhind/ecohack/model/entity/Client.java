@@ -37,8 +37,14 @@ public class Client {
     @Column(name = "surname")
     private String surname;
 
-    @Column(name = "address")
-    private String address;
+    @Column
+    private Long latitude;
+
+    @Column
+    private Long longtitude;
+
+    @Column
+    private Integer rankingPoints;
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
@@ -49,5 +55,11 @@ public class Client {
             cascade = CascadeType.ALL
     )
     private List<Order> orderList;
+
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL
+    )
+    private List<Tag> preferedTags;
 
 }
