@@ -28,5 +28,10 @@ public class MealController {
         return ResponseEntity.ok().body(null);
     }
 
+    @PostMapping()
+    public ResponseEntity<MealDto> saveMeal(@RequestBody() MealDto meal) {
+        return ResponseEntity.ok(mealService.save(meal));
+    }
+
 
 }

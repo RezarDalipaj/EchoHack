@@ -13,4 +13,5 @@ public interface IMealService {
     public Void uploadImage(MultipartFile image, Long mealId) throws IOException;
     public MealDto findById(Long id);
     public MealDto save(MealDto mealDto);
+    public MealDto updateImage(String image, Long mealId);
 }
