@@ -79,12 +79,10 @@ public class MealService implements IMealService {
             List<Ingredient> ingredients = new ArrayList<>();
             for (IngredientDto ingredientDto : mealDto.getIngredients()){
                 Optional<Ingredient> ingredientOptional = ingredientRepository.findById(ingredientDto.getId());
-                if (ingredientOptional.isPresent()){
-                    ingredients.add(ingredientOptional.get());
-                }
+                ingredientOptional.ifPresent(ingredients::add);
             }
 
-            meal.setIngredients();
+            meal.setIngredients(ingredients);
         }
         return null;
     }
