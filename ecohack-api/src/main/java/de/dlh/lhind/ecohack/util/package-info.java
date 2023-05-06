@@ -1,1 +1,0 @@
-package de.dlh.lhind.ecohack.util;

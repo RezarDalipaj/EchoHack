@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.security;
 
+import de.dlh.lhind.ecohack.service.impl.JwtUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final UserDetailsService userDetailsService;
+    private final JwtUserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
 
     @Override

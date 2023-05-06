@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class UserDto {
-    private String email;
-    private String role;
+public class TagDto {
+    private Long id;
+    private String name;
 }

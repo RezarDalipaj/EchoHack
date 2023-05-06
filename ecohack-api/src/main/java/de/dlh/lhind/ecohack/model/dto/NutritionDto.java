@@ -7,7 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class UserDto {
-    private String email;
-    private String role;
+public class NutritionDto {
+    private Long id;
+    private String name;
+    private Double amount;
+    private Long mealId;
 }
