@@ -15,6 +15,7 @@ public class MealDto {
     private String name;
     @Lob
     private String image;
+    private Long price;
     private List<NutritionDto> nutritions;
     private List<TagDto> tags;
     private List<IngredientDto> ingredients;

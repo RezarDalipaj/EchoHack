@@ -23,6 +23,9 @@ public class Meal {
     @Column
     private Integer totalPoints;
 
+    @Column
+    private Long price;
+
     @Lob
     @Column
     private String image;
