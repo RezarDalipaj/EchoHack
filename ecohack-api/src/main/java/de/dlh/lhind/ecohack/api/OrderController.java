@@ -19,8 +19,8 @@ public class OrderController {
     private final IOrderService orderService;
     private final TokenUtil tokenUtil;
 
-    @PostMapping
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
+    @PostMapping
     public void saveOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) throws Exception{
         String username = tokenUtil.usernameFromToken(request);
         orderDto.setUsername(username);

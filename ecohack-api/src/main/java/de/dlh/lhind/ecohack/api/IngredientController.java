@@ -23,8 +23,8 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientService.findAll());
     }
 
-    @PostMapping()
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
+    @PostMapping()
     public ResponseEntity<IngredientDto> save(@RequestBody IngredientDto ingredientDto, HttpServletRequest request){
         return ResponseEntity.ok(ingredientService.save(ingredientDto, tokenUtil.usernameFromToken(request)));
     }

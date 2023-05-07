@@ -1,17 +1,15 @@
 package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.mapper.MealMapper;
-import de.dlh.lhind.ecohack.mapper.TagMapper;
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.model.dto.NutritionDto;
-import de.dlh.lhind.ecohack.model.dto.TagDto;
 import de.dlh.lhind.ecohack.model.entity.Ingredient;
 import de.dlh.lhind.ecohack.model.entity.Meal;
 import de.dlh.lhind.ecohack.model.entity.Nutrition;
 import de.dlh.lhind.ecohack.repository.IngredientRepository;
 import de.dlh.lhind.ecohack.repository.MealRepository;
-import de.dlh.lhind.ecohack.repository.NutritionRepository;
+import de.dlh.lhind.ecohack.service.IClientService;
 import de.dlh.lhind.ecohack.service.IMealService;
 import de.dlh.lhind.ecohack.service.IProviderService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +32,7 @@ public class MealService implements IMealService {
 
     private final MealRepository mealRepository;
     private final IngredientRepository ingredientRepository;
-    private final ClientService clientService;
+    private final IClientService clientService;
     private final IProviderService providerService;
     private final MealMapper mealMapper;
 
@@ -56,18 +54,17 @@ public class MealService implements IMealService {
 
 
     @Override
-    public Void uploadImage(MultipartFile image, Long mealId) throws IOException {
+    public void uploadImage(MultipartFile image, Long mealId) throws IOException {
 
         byte[] imageData = image.getBytes();
         String imageBase64 = Base64.getEncoder().encodeToString(imageData);
 
         updateImage(imageBase64, mealId);
-        return null;
     }
 
     @Override
     public MealDto findById(Long id) {
-        return mealMapper.toMealdDto(findEntityById(id));
+        return mealMapper.toMealDto(findEntityById(id));
     }
 
     @Override
@@ -123,7 +120,7 @@ public class MealService implements IMealService {
         meal.setIngredients(ingredients);
         meal.setNutritions(nutritions);
 
-        return mealMapper.toMealdDto(mealRepository.save(meal));
+        return mealMapper.toMealDto(mealRepository.save(meal));
     }
 
     @Override
@@ -133,7 +130,7 @@ public class MealService implements IMealService {
             Meal meal = mealOptional.get();
             meal.setImage(image);
             mealRepository.save(meal);
-            return mealMapper.toMealdDto(meal);
+            return mealMapper.toMealDto(meal);
         } else {
             throw new NullPointerException("Meal with id: " + mealId + " was not found!");
         }

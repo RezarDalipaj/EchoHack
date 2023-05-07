@@ -13,8 +13,6 @@ import java.util.List;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL)
 public interface MealMapper {
 
-    MealDto toMealdDto(Meal meal);
+    MealDto toMealDto(Meal meal);
     List<MealDto> toMealDtoList(List<Meal> meals);
-//    Meal toMeal(MealDto meal);
-//    List<Meal> toMealList(List<MealDto> meal);
 }

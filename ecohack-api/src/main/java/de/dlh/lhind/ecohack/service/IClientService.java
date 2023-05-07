@@ -9,11 +9,11 @@ import de.dlh.lhind.ecohack.model.entity.Client;
 public interface IClientService {
 
 
-    public Integer saveClientPoints(QuestionnaireDto questionnaire, Long clientId);
+    Integer saveClientPoints(QuestionnaireDto questionnaire, Long clientId);
     TokenDto save(ClientDto clientDto) throws BadRequestException;
-    public Integer savePoints(QuestionnaireDto questionnaire, Long clientId);
-    public Integer getPoints(String username);
-    public ClientDto findById(Long clientId);
-    public ClientDto findByUsername(String username);
+    Integer savePoints(QuestionnaireDto questionnaire, Long clientId);
+    Integer getPoints(String username);
+    ClientDto findById(Long clientId);
+    ClientDto findByUsername(String username);
     Client findClientByUsername(String username);
 }
