@@ -2,7 +2,11 @@ package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
+import de.dlh.lhind.ecohack.model.entity.Client;
+import de.dlh.lhind.ecohack.model.entity.Meal;
 import de.dlh.lhind.ecohack.model.entity.Order;
+import de.dlh.lhind.ecohack.model.entity.OrderDetail;
+import de.dlh.lhind.ecohack.model.enumeration.OrderStatus;
 import de.dlh.lhind.ecohack.repository.OrderRepository;
 import de.dlh.lhind.ecohack.service.IClientService;
 import de.dlh.lhind.ecohack.service.IMealService;
@@ -10,7 +14,11 @@ import de.dlh.lhind.ecohack.service.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +29,34 @@ public class OrderService implements IOrderService {
     @Override
     public void save(OrderDto orderDto) throws BadRequestException {
         var client = clientService.findClientByUsername(orderDto.getUsername());
-        if (orderDto.getMeals() == null || orderDto.getMeals().isEmpty())
+        if (isEmpty(orderDto.getMeals()))
             throw new BadRequestException("Order cannot be empty");
         var order = new Order();
         order.setClient(client);
+        order.setComment(orderDto.getComment());
         order.setMeals(new ArrayList<>());
         for (var meal : orderDto.getMeals()) {
             var mealEntity = mealService.findEntityById(meal.getMealId());
             order.getMeals().add(mealEntity);
         }
+        order.setOrderDetail(setOrderDetails(client, order.getMeals()));
+        order.setOrderDate(LocalDateTime.now());
         orderRepository.save(order);
+    }
+
+    private OrderDetail setOrderDetails(Client client, List<Meal> meals){
+        var details = new OrderDetail();
+        details.setStatus(OrderStatus.ACCEPTED);
+        details.setPaymentMethod(client.getPaymentMethod());
+        details.setPrice(calculatePrice(meals));
+        return details;
+    }
+
+    private Double calculatePrice(List<Meal> meals) {
+        Double price = 0D;
+        for (var meal : meals) {
+            price += meal.getPrice();
+        }
+        return price;
     }
 }

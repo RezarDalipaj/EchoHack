@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.api;
 
+import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
 import de.dlh.lhind.ecohack.service.IOrderService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
@@ -21,7 +22,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
     @PostMapping
-    public void saveOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) throws Exception{
+    public void saveOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException {
         String username = tokenUtil.usernameFromToken(request);
         orderDto.setUsername(username);
         orderService.save(orderDto);

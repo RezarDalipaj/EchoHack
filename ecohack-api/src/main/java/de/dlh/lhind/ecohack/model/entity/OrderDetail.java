@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.model.entity;
 
+import de.dlh.lhind.ecohack.model.enumeration.OrderStatus;
 import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,9 +12,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table
+@Getter
+@Setter
 public class OrderDetail {
 
     @Id
@@ -22,17 +27,21 @@ public class OrderDetail {
     private Long id;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    @Column(name = "transport_fee")
-    private Long transportFee;
+    @Column(name = "price")
+    private Double price;
+
+    @Column(name = "distance")
+    private Double distanceInMeters;
 
     @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
 }
