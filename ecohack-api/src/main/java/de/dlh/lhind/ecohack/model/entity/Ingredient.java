@@ -8,13 +8,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Table(name = "ingredient")
+@Table(name = "ingredient", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "name")
+})
 @Getter
 @Setter
 public class Ingredient {

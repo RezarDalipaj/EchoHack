@@ -31,10 +31,10 @@ public class Client {
     @OneToOne
     private User user;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "surname")
+    @Column(name = "surname", nullable = false)
     private String surname;
 
     @Column
