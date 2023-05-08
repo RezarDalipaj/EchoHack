@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.security.config;
 import de.dlh.lhind.ecohack.security.TokenAuthenticationFilter;
+import de.dlh.lhind.ecohack.service.ILogoutService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -21,9 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
 	private final TokenAuthenticationFilter tokenAuthenticationFilter;
+	private final ILogoutService logoutService;
 
-	public WebSecurityConfig(@Lazy TokenAuthenticationFilter tokenAuthenticationFilter) {
+	public WebSecurityConfig(@Lazy TokenAuthenticationFilter tokenAuthenticationFilter, ILogoutService logoutService) {
 		this.tokenAuthenticationFilter = tokenAuthenticationFilter;
+		this.logoutService = logoutService;
 	}
 
 	@Bean
@@ -39,10 +42,10 @@ public class WebSecurityConfig {
 				.requestMatchers("/public/**", "/auth/**", "/oauth2/**").permitAll()
 				.requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
 				.anyRequest().authenticated();
-		http.logout()
-			.logoutUrl("/logout");
-		http.logout(l -> l.logoutSuccessUrl("/").permitAll());
 		http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+		http.logout()
+				.logoutUrl("/logout")
+				.addLogoutHandler(logoutService);
 		http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.cors().and().csrf().disable();

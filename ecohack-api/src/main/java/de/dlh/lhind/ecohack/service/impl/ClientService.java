@@ -105,9 +105,7 @@ public class ClientService implements IClientService {
     @Override
     public Client findClientByUsername(String username) {
         var client = clientRepository.findByUser_Email(username);
-        if (client.isEmpty())
-            throw new NullPointerException("Client not found");
-        return client.get();
+        return client.orElseThrow(NullPointerException::new);
     }
 
     private void validateRegister(ClientDto clientDto) throws BadRequestException {

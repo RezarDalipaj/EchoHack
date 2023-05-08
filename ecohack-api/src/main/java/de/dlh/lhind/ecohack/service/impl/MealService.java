@@ -70,11 +70,7 @@ public class MealService implements IMealService {
     @Override
     public Meal findEntityById(Long id) {
         Optional<Meal> mealOptional = mealRepository.findById(id);
-        if (mealOptional.isPresent()){
-            return mealOptional.get();
-        } else {
-            throw new NullPointerException("Meal with id: " + id + " does not exist");
-        }
+        return mealOptional.orElseThrow(NullPointerException::new);
     }
 
     @Override
@@ -82,13 +78,6 @@ public class MealService implements IMealService {
         var provider = providerService.findByEmail(username);
         Meal meal = new Meal();
         meal.setFoodProvider(provider);
-        if (mealDto.getName() == null){
-            throw new NullPointerException("Meal name is null");
-        }
-        if (mealDto.getPrice() == null){
-            throw new NullPointerException("Meal price is null");
-        }
-
 
         meal.setName(mealDto.getName());
         meal.setPrice(mealDto.getPrice());

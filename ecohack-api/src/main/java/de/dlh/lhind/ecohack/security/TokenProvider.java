@@ -1,6 +1,8 @@
 package de.dlh.lhind.ecohack.security;
 
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
+import de.dlh.lhind.ecohack.model.entity.Token;
+import de.dlh.lhind.ecohack.repository.TokenRepository;
+import de.dlh.lhind.ecohack.service.IUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -12,6 +14,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,18 +29,43 @@ import java.util.UUID;
 @Component
 public class TokenProvider {
 
+    private final TokenRepository tokenRepository;
+    private final IUserService userService;
     @Value("${app.jwt.secret}")
     private String jwtSecret;
+
+    public TokenProvider(TokenRepository tokenRepository, @Lazy IUserService userService) {
+        this.tokenRepository = tokenRepository;
+        this.userService = userService;
+    }
+
+    public boolean isTokenRevoked(String token){
+        var entity = tokenRepository.findByToken(token);
+        if (entity.isEmpty())
+            throw new NullPointerException("Token doesn't exist");
+        return entity.get().isRevoked();
+    }
 
     public String generate(Authentication authentication, Integer minutes) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
-        var roles = getRolesFromUser(user);
+        var role = getRoleFromUser(user);
 
-        return buildToken(user, roles, minutes);
+        var token = buildToken(user, role, minutes);
+        saveToken(user.getUsername(), token);
+        return token;
     }
 
-    public String getRolesFromUser(UserDetails userDetails){
+    private void saveToken(String username, String token) {
+        var user = userService.findUserByEmail(username);
+        var tokenEntity = new Token();
+        tokenEntity.setUser(user);
+        tokenEntity.setToken(token);
+        tokenEntity.setRevoked(false);
+        tokenRepository.save(tokenEntity);
+    }
+
+    public String getRoleFromUser(UserDetails userDetails){
         return userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
@@ -62,6 +90,8 @@ public class TokenProvider {
     }
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token) {
+        if (isTokenRevoked(token))
+            return Optional.empty();
         try {
             byte[] signingKey = jwtSecret.getBytes();
             Jws<Claims> jws = Jwts.parserBuilder()
@@ -84,29 +114,27 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    private Jws<Claims> getClaimsFromToken(String token) throws UnAuthorizedException {
+    private Jws<Claims> getClaimsFromToken(String token) {
         var claims = validateTokenAndGetJws(token);
-        if (claims.isEmpty())
-            throw new UnAuthorizedException("Unauthorized!");
-        return claims.get();
+        return claims.orElseThrow();
     }
 
-    public <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
+    public <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) {
         var claims = getClaimsFromToken(token);
         return claims.getBody().get(claimType, claimClass);
     }
 
-    public String getUsernameFromToken(String token) throws UnAuthorizedException {
+    public String getUsernameFromToken(String token) {
         var claims = getClaimsFromToken(token);
         return claims.getBody().getSubject();
     }
 
-    public Date getExpirationDateFromToken(String token) throws UnAuthorizedException {
+    public Date getExpirationDateFromToken(String token) {
         var claims = getClaimsFromToken(token);
         return claims.getBody().getExpiration();
     }
 
-    public String getRoleFromToken(String token) throws UnAuthorizedException {
+    public String getRoleFromToken(String token) {
         return getClaimFromToken(token, "role", String.class);
     }
 

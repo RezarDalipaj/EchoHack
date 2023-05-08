@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.security;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.FilterChain;
