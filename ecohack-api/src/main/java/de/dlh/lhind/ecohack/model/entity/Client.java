@@ -38,10 +38,10 @@ public class Client {
     private String surname;
 
     @Column
-    private Long latitude;
+    private Double latitude;
 
     @Column
-    private Long longtitude;
+    private Double longtitude;
 
     @Column
     private Integer rankingPoints;

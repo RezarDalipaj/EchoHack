@@ -21,7 +21,7 @@
         <springdoc-openapi.version>2.0.4</springdoc-openapi.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <mapstruct.version>1.5.2.Final</mapstruct.version>
+        <mapstruct.version>1.5.3.Final</mapstruct.version>
         <maven-compiler.version>3.8.1</maven-compiler.version>
         <lombok.version>1.18.26</lombok.version>
         <start-class>de.dlh.lhind.ecohack.EcoHackSpringBoot</start-class>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.1.6.RELEASE</version>
+            <version>3.0.4</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
         </dependency>
     </dependencies>
 
@@ -125,6 +125,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.10.RELEASE</version>
                 <configuration>
                     <mainClass>de.dlh.lhind.ecohack.EcoHackSpringBoot</mainClass>
                     <layout>JAR</layout>

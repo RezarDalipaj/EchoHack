@@ -2,6 +2,7 @@ package de.dlh.lhind.ecohack.model.dto;
 
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,9 +16,9 @@ public class ProviderDto extends LoginDto {
     @NotBlank
     private String nipt;
 
-    @NotBlank
-    private Long latitude;
+    @NotNull
+    private Double latitude;
 
-    @NotBlank
-    private Long longtitude;
+    @NotNull
+    private Double longtitude;
 }

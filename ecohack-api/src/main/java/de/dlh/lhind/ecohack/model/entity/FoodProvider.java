@@ -39,10 +39,10 @@ public class FoodProvider{
     private String nipt;
 
     @Column
-    private Long latitude;
+    private Double latitude;
 
     @Column
-    private Long longtitude;
+    private Double longtitude;
 
 
 }

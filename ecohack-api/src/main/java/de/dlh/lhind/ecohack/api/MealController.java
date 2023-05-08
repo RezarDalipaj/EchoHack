@@ -5,6 +5,7 @@ import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.service.IMealService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +33,7 @@ public class MealController {
     }
 
     @PostMapping()
-    public ResponseEntity<MealDto> save(@RequestBody MealDto meal, HttpServletRequest request) throws UnAuthorizedException {
+    public ResponseEntity<MealDto> save(@Valid @RequestBody MealDto meal, HttpServletRequest request) throws UnAuthorizedException {
         return ResponseEntity.ok(mealService.save(meal, tokenUtil.usernameFromToken(request)));
     }
 

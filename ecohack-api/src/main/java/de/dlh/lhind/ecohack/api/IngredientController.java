@@ -2,6 +2,7 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.service.IIngredientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,7 +23,7 @@ public class IngredientController {
 
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
     @PostMapping()
-    public ResponseEntity<IngredientDto> save(@RequestBody IngredientDto ingredientDto){
+    public ResponseEntity<IngredientDto> save(@Valid @RequestBody IngredientDto ingredientDto){
         return ResponseEntity.ok(ingredientService.save(ingredientDto));
     }
 }

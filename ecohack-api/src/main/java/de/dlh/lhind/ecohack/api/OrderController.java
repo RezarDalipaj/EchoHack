@@ -5,6 +5,7 @@ import de.dlh.lhind.ecohack.model.dto.OrderDto;
 import de.dlh.lhind.ecohack.service.IOrderService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
     @PostMapping
-    public void saveOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) throws Exception {
+    public void saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws Exception {
         String username = tokenUtil.usernameFromToken(request);
         orderDto.setUsername(username);
         orderService.save(orderDto);

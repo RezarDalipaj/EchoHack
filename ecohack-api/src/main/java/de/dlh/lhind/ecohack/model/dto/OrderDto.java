@@ -1,8 +1,6 @@
 package de.dlh.lhind.ecohack.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +16,6 @@ public class OrderDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdDate;
     private String comment;
-    @NotBlank
     private List<OrderMealDto> meals;
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double amountPayed;

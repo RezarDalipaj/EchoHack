@@ -4,6 +4,7 @@ import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.model.dto.ProviderDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.service.IProviderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class ProviderController {
     private final IProviderService providerService;
 
     @PostMapping("/auth/provider/signup")
-    public ResponseEntity<TokenDto> saveProvider(@RequestBody ProviderDto providerDto) throws BadRequestException {
+    public ResponseEntity<TokenDto> saveProvider(@Valid @RequestBody ProviderDto providerDto) throws BadRequestException {
         return ResponseEntity.ok(providerService.saveProvider(providerDto));
     }
 }

@@ -24,7 +24,7 @@ public class Meal {
     private Integer totalPoints;
 
     @Column
-    private Long price;
+    private Double price;
 
     @Lob
     @Column

@@ -4,6 +4,7 @@ import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.service.IClientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class ClientController {
     private final IClientService clientService;
 
     @PostMapping("/auth/client/signup")
-    public ResponseEntity<TokenDto> saveClient(@RequestBody ClientDto clientDto) throws BadRequestException {
+    public ResponseEntity<TokenDto> saveClient(@Valid @RequestBody ClientDto clientDto) throws BadRequestException {
         return ResponseEntity.ok(clientService.save(clientDto));
     }
 }

@@ -3,6 +3,7 @@ package de.dlh.lhind.ecohack.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +17,10 @@ public class ClientDto extends LoginDto {
     private String name;
     @NotBlank
     private String surname;
-    @NotBlank
-    private Long latitude;
-    @NotBlank
-    private Long longtitude;
+    @NotNull
+    private Double latitude;
+    @NotNull
+    private Double longtitude;
     private String paymentMethod;
     private Integer rankingPoints;
 }

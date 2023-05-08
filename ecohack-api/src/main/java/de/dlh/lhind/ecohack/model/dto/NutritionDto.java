@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,8 @@ public class NutritionDto {
     private Long id;
     @NotBlank
     private String name;
-    @NotBlank
+    @NotNull
     private Double amount;
-    @NotBlank
+    @NotNull
     private Long mealId;
 }

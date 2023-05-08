@@ -1,20 +1,18 @@
 package de.dlh.lhind.ecohack.model.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import lombok.Builder;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class QuestionnaireDto {
-    @NotBlank
+    @NotNull
     private Integer questionOneResult;
-    @NotBlank
+    @NotNull
     private Integer questionTwoResult;
-    @NotBlank
+    @NotNull
     private Integer questionThreeResult;
-    @NotBlank
+    @NotNull
     private Integer questionFourResult;
 }

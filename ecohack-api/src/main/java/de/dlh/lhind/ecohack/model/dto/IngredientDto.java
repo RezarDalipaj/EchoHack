@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class IngredientDto {
     private Long id;
-    @NotBlank
+    @NotNull
     private Integer points;
     @NotBlank
     private String name;

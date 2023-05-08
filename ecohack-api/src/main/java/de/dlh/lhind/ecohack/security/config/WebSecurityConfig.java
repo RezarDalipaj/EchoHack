@@ -39,6 +39,8 @@ public class WebSecurityConfig {
 				.requestMatchers("/public/**", "/auth/**", "/oauth2/**").permitAll()
 				.requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
 				.anyRequest().authenticated();
+		http.logout()
+			.logoutUrl("/logout");
 		http.logout(l -> l.logoutSuccessUrl("/").permitAll());
 		http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
