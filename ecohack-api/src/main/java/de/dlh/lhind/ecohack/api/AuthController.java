@@ -8,6 +8,7 @@ import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,12 +23,12 @@ public class AuthController {
     private final TokenUtil tokenUtil;
 
     @PostMapping("/auth/login")
-    public TokenDto login(@Valid @RequestBody LoginDto loginRequest) {
-        return authService.login(loginRequest);
+    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) {
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 
     @GetMapping("/refresh/token")
-    public TokenDto refreshToken(HttpServletRequest request) throws UnAuthorizedException {
-        return authService.refreshToken(tokenUtil.usernameFromToken(request));
+    public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) throws UnAuthorizedException {
+        return ResponseEntity.ok(authService.refreshToken(tokenUtil.usernameFromToken(request)));
     }
 }

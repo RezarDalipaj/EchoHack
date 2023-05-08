@@ -27,8 +27,8 @@ public class OrderService implements IOrderService {
     private final IMealService mealService;
     private final OrderRepository orderRepository;
     @Override
-    public void save(OrderDto orderDto) throws BadRequestException {
-        var client = clientService.findClientByUsername(orderDto.getUsername());
+    public void save(OrderDto orderDto, String username) throws BadRequestException {
+        var client = clientService.findClientByUsername(username);
         if (isEmpty(orderDto.getMeals()))
             throw new BadRequestException("Order cannot be empty");
         var order = new Order();

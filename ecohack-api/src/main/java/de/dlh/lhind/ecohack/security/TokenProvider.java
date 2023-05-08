@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,19 +32,20 @@ public class TokenProvider {
     public String generate(Authentication authentication, Integer minutes) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
-        List<String> roles = getRolesFromUser(user);
+        var roles = getRolesFromUser(user);
 
         return buildToken(user, roles, minutes);
     }
 
-    public List<String> getRolesFromUser(UserDetails userDetails){
+    public String getRolesFromUser(UserDetails userDetails){
         return userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
-                .toList();
+                .findFirst()
+                .orElseThrow();
     }
 
-    public String buildToken(UserDetails user, List<String> roles, Integer minutes){
+    public String buildToken(UserDetails user, String roles, Integer minutes){
         byte[] signingKey = jwtSecret.getBytes();
         return Jwts.builder()
                 .setHeaderParam("type", TOKEN_TYPE)
@@ -84,11 +84,30 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    public String getUsernameFromToken(String token) throws UnAuthorizedException {
+    private Jws<Claims> getClaimsFromToken(String token) throws UnAuthorizedException {
         var claims = validateTokenAndGetJws(token);
         if (claims.isEmpty())
             throw new UnAuthorizedException("Unauthorized!");
-        return claims.get().getBody().getSubject();
+        return claims.get();
+    }
+
+    public <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
+        var claims = getClaimsFromToken(token);
+        return claims.getBody().get(claimType, claimClass);
+    }
+
+    public String getUsernameFromToken(String token) throws UnAuthorizedException {
+        var claims = getClaimsFromToken(token);
+        return claims.getBody().getSubject();
+    }
+
+    public Date getExpirationDateFromToken(String token) throws UnAuthorizedException {
+        var claims = getClaimsFromToken(token);
+        return claims.getBody().getExpiration();
+    }
+
+    public String getRoleFromToken(String token) throws UnAuthorizedException {
+        return getClaimFromToken(token, "role", String.class);
     }
 
     public static final String TOKEN_TYPE = "JWT";

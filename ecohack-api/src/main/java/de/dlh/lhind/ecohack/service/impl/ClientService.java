@@ -36,24 +36,28 @@ public class ClientService implements IClientService {
             case 1 -> totalPoints += Answers.QUESTION_ONE_1.getPoints();
             case 2 -> totalPoints += Answers.QUESTION_ONE_2.getPoints();
             case 3 -> totalPoints += Answers.QUESTION_ONE_3.getPoints();
+            default -> totalPoints += 0;
         }
 
         switch (questionnaire.getQuestionTwoResult()) {
             case 1 -> totalPoints += Answers.QUESTION_TWO_1.getPoints();
             case 2 -> totalPoints += Answers.QUESTION_TWO_2.getPoints();
             case 3 -> totalPoints += Answers.QUESTION_TWO_3.getPoints();
+            default -> totalPoints += 0;
         }
 
         switch (questionnaire.getQuestionThreeResult()) {
             case 1 -> totalPoints += Answers.QUESTION_THREE_1.getPoints();
             case 2 -> totalPoints += Answers.QUESTION_THREE_2.getPoints();
             case 3 -> totalPoints += Answers.QUESTION_THREE_3.getPoints();
+            default -> totalPoints += 0;
         }
 
         switch (questionnaire.getQuestionFourResult()) {
             case 1 -> totalPoints += Answers.QUESTION_FOUR_1.getPoints();
             case 2 -> totalPoints += Answers.QUESTION_FOUR_2.getPoints();
             case 3 -> totalPoints += Answers.QUESTION_FOUR_3.getPoints();
+            default -> totalPoints += 0;
         }
 
         //TODO: Update user points

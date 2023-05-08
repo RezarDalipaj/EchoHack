@@ -27,9 +27,8 @@ public class MealController {
         return ResponseEntity.ok(mealService.findAllByClientUsername(username, pageSize, pageNumber));
     }
     @PutMapping("/image")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile image, @RequestParam Long mealId) throws IOException {
+    public void uploadImage(@RequestParam("image") MultipartFile image, @RequestParam Long mealId) throws IOException {
         mealService.uploadImage(image, mealId);
-        return ResponseEntity.ok().body(null);
     }
 
     @PostMapping()

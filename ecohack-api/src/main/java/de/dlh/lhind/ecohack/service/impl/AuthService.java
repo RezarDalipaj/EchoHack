@@ -6,11 +6,9 @@ import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IAuthService;
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
-import de.dlh.lhind.ecohack.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
