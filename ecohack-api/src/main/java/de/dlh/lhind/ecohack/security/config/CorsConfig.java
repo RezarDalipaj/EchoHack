@@ -1,4 +1,4 @@
-package de.dlh.lhind.ecohack.security;
+package de.dlh.lhind.ecohack.security.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

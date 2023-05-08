@@ -18,7 +18,9 @@ app:
     # In http://www.allkeysgenerator.com/ you can generate all kinds of keys
     secret: geekSquad1617478ibsdcfidsbvnsdvbnvuinyvbnkbfisdigvbnsdvnfvusdbncdsuvsdnvbdsvdsuibyuvbsdfuy
     expiration:
-      minutes: 10
+      minutes:
+        access: 10
+        refresh: 120
   cors:
     allowed-origins: "*"
 

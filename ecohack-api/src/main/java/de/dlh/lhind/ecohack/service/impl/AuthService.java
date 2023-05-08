@@ -2,12 +2,11 @@ package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
-import de.dlh.lhind.ecohack.security.config.JwtTokenUtil;
+import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,8 +14,7 @@ import org.springframework.stereotype.Service;
 public class AuthService implements IAuthService {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil tokenProvider;
-    private final JwtUserDetailsService userDetailsService;
+    private final TokenProvider tokenProvider;
 
     @Override
     public TokenDto login(LoginDto loginDto) {
@@ -27,9 +25,8 @@ public class AuthService implements IAuthService {
     }
 
     private String authenticateAndGetToken(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(username);
-        return tokenProvider.generateToken(userDetails);
+        var authentication = authenticationManager.authenticate
+                (new UsernamePasswordAuthenticationToken(username, password));
+        return tokenProvider.generate(authentication);
     }
 }
