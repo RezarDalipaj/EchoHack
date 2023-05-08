@@ -17,10 +17,11 @@ public class TokenScheduler {
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;
 
-    @Scheduled(initialDelay = 120000, fixedDelay = 7200000)
+    @Scheduled(initialDelay = 120000, fixedDelay = 300000)
     public void deleteRevokedTokens(){
-        var expiredTokens = tokenRepository.findAll().stream().filter(token ->
-                (tokenProvider.getExpirationDateFromToken(token.getToken())).after(new Date())).toList();
-        tokenRepository.deleteAll(expiredTokens);
+        var expiredOrRevokedTokens = tokenRepository.findAll().stream().filter(token ->
+                (tokenProvider.getExpirationDateFromToken(token.getToken())).before(new Date())
+                || token.isRevoked()).toList();
+        tokenRepository.deleteAll(expiredOrRevokedTokens);
     }
 }

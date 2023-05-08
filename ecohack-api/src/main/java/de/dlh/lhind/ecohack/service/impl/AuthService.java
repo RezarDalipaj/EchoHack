@@ -34,8 +34,8 @@ public class AuthService implements IAuthService {
     public TokenDto refreshToken(String username) {
         var user = userDetailsService.loadUserByUsername(username);
         var roles = tokenProvider.getRoleFromUser(user);
-        String accessToken = tokenProvider.buildToken(user, roles, jwtProperties.getAccess());
-        String refreshToken = tokenProvider.buildToken(user, roles, jwtProperties.getRefresh());
+        String accessToken = tokenProvider.buildAndSaveToken(user, roles, jwtProperties.getAccess());
+        String refreshToken = tokenProvider.buildAndSaveToken(user, roles, jwtProperties.getRefresh());
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)

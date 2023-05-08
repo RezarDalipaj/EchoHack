@@ -20,7 +20,7 @@ app:
     expiration:
       minutes:
         access: 10
-        refresh: 120
+        refresh: 60
   cors:
     allowed-origins: "*"
 

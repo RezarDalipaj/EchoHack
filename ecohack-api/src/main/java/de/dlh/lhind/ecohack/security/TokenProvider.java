@@ -39,10 +39,10 @@ public class TokenProvider {
         this.userService = userService;
     }
 
-    public boolean isTokenRevoked(String token){
+    public boolean tokenNotExistsOrIsRevoked(String token){
         var entity = tokenRepository.findByToken(token);
         if (entity.isEmpty())
-            throw new NullPointerException("Token doesn't exist");
+            return true;
         return entity.get().isRevoked();
     }
 
@@ -51,9 +51,7 @@ public class TokenProvider {
 
         var role = getRoleFromUser(user);
 
-        var token = buildToken(user, role, minutes);
-        saveToken(user.getUsername(), token);
-        return token;
+        return buildAndSaveToken(user, role, minutes);
     }
 
     private void saveToken(String username, String token) {
@@ -73,9 +71,9 @@ public class TokenProvider {
                 .orElseThrow();
     }
 
-    public String buildToken(UserDetails user, String roles, Integer minutes){
+    public String buildAndSaveToken(UserDetails user, String roles, Integer minutes){
         byte[] signingKey = jwtSecret.getBytes();
-        return Jwts.builder()
+        var token = Jwts.builder()
                 .setHeaderParam("type", TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(minutes).toInstant()))
@@ -87,10 +85,12 @@ public class TokenProvider {
                 .claim("role", roles)
                 .claim("preferred_username", user.getUsername())
                 .compact();
+        saveToken(user.getUsername(), token);
+        return token;
     }
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token) {
-        if (isTokenRevoked(token))
+        if (tokenNotExistsOrIsRevoked(token))
             return Optional.empty();
         try {
             byte[] signingKey = jwtSecret.getBytes();
@@ -132,6 +132,11 @@ public class TokenProvider {
     public Date getExpirationDateFromToken(String token) {
         var claims = getClaimsFromToken(token);
         return claims.getBody().getExpiration();
+    }
+
+    public void expireToken(String token){
+        var claims = getClaimsFromToken(token);
+        claims.getBody().setExpiration(new Date());
     }
 
     public String getRoleFromToken(String token) {

@@ -21,7 +21,10 @@ public class LogoutService implements ILogoutService {
             , HttpServletResponse response, Authentication authentication) {
         var token = tokenUtil.getTokenFromRequest(request);
         var storedToken = tokenRepository.findByToken(token).orElseThrow();
-        storedToken.setRevoked(true);
-        tokenRepository.save(storedToken);
+        var loggedOutUser = storedToken.getUser();
+        var tokensOfUser = tokenRepository.findAllByUser(loggedOutUser);
+        tokensOfUser.forEach(tokenToBeRevoked ->
+                tokenToBeRevoked.setRevoked(true));
+        tokenRepository.saveAll(tokensOfUser);
     }
 }
