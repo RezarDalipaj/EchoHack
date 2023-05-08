@@ -5,4 +5,5 @@ import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 
 public interface IAuthService {
     TokenDto login(LoginDto loginDto);
+    TokenDto refreshToken(String username);
 }

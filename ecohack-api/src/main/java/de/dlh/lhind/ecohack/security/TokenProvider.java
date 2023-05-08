@@ -1,7 +1,6 @@
 package de.dlh.lhind.ecohack.security;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
-import de.dlh.lhind.ecohack.model.dto.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -11,7 +10,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -27,35 +25,32 @@ import java.util.UUID;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class TokenProvider {
 
-    private final JwtProperties jwtProperties;
-//    @Value("${app.jwt.secret}")
-//    private String jwtSecret;
+    @Value("${app.jwt.secret}")
+    private String jwtSecret;
 
-    private final byte[] signingKey = jwtProperties.getSecret().getBytes();
-
-//    @Value("${app.jwt.expiration.minutes.access}")
-//    private Long jwtExpirationMinutes;
-
-    public String generate(Authentication authentication) {
+    public String generate(Authentication authentication, Integer minutes) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
-        List<String> roles = user.getAuthorities()
+        List<String> roles = getRolesFromUser(user);
+
+        return buildToken(user, roles, minutes);
+    }
+
+    public List<String> getRolesFromUser(UserDetails userDetails){
+        return userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
-
-        return buildToken(user, roles);
     }
 
-    private String buildToken(UserDetails user, List<String> roles){
+    public String buildToken(UserDetails user, List<String> roles, Integer minutes){
+        byte[] signingKey = jwtSecret.getBytes();
         return Jwts.builder()
-                .setHeaderParam("typ", TOKEN_TYPE)
+                .setHeaderParam("type", TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
-                .setExpiration(Date.from(ZonedDateTime.now()
-                .plusMinutes(jwtProperties.getExpirationMinutesAccess()).toInstant()))
+                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(minutes).toInstant()))
                 .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
                 .setId(UUID.randomUUID().toString())
                 .setIssuer(TOKEN_ISSUER)
@@ -68,6 +63,7 @@ public class TokenProvider {
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token) {
         try {
+            byte[] signingKey = jwtSecret.getBytes();
             Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(signingKey)
                     .build()

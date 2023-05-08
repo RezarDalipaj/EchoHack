@@ -7,5 +7,6 @@ import lombok.Getter;
 @Builder
 public class TokenDto {
     private static final long serialVersionUID = -8091879091924046844L;
-    private String jwtToken;
+    private String accessToken;
+    private String refreshToken;
 }

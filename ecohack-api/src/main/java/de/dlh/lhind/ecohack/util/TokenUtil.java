@@ -14,8 +14,10 @@ import java.util.Optional;
 public class TokenUtil {
     private final TokenProvider tokenProvider;
     public String usernameFromToken(HttpServletRequest request) throws UnAuthorizedException {
-        String token = request.getHeader(TOKEN_HEADER).substring(7);
-        return tokenProvider.getUsernameFromToken(token);
+        var optionalToken = getJwtFromRequest(request);
+        if (optionalToken.isEmpty())
+            throw new UnAuthorizedException("Unauthorized!");
+        return tokenProvider.getUsernameFromToken(optionalToken.get());
     }
 
     public Optional<String> getJwtFromRequest(HttpServletRequest request) {
