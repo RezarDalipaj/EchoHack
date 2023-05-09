@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
 import de.dlh.lhind.ecohack.service.IOrderService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
@@ -23,7 +24,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
     @PostMapping
-    public void saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException {
+    public void saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException, UnAuthorizedException {
         orderService.save(orderDto, tokenUtil.usernameFromToken(request));
     }
 }

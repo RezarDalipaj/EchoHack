@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.api;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/refresh/token")
-    public ResponseEntity<TokenDto> refreshToken(@Valid @RequestBody RefreshDto refreshDto) {
+    public ResponseEntity<TokenDto> refreshToken(@Valid @RequestBody RefreshDto refreshDto) throws UnAuthorizedException {
         return ResponseEntity.ok(authService.refreshToken(refreshDto));
     }
 }

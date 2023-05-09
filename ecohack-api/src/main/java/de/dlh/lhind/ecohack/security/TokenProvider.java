@@ -2,9 +2,11 @@ package de.dlh.lhind.ecohack.security;
 
 import de.dlh.lhind.ecohack.config.JwtProperties;
 import de.dlh.lhind.ecohack.config.JwtSecret;
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.entity.Token;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
+import de.dlh.lhind.ecohack.util.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -131,53 +133,59 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    public boolean tokenDoesNotExist(String token){
+    private boolean tokenDoesNotExist(String token){
         var entity = tokenRepository.findByToken(token);
         return entity.isEmpty();
     }
 
-    public byte[] getKeyFromBoolean(boolean isAccess){
+    private byte[] getKeyFromBoolean(boolean isAccess){
         if (isAccess)
             return jwtSecret.getAccess().getBytes();
         return jwtSecret.getRefresh().getBytes();
     }
 
-    private Jws<Claims> getClaimsFromRefreshToken(String token){
+    private Jws<Claims> getClaimsFromRefreshToken(String token) throws UnAuthorizedException {
         var claims = validateTokenAndGetJws(token, false);
-        return claims.orElseThrow();
+        return validateAndReturnClaims(claims);
     }
 
-    private Jws<Claims> getClaimsFromAccessToken(String token) {
+    private Jws<Claims> getClaimsFromAccessToken(String token) throws UnAuthorizedException {
         var claims = validateTokenAndGetJws(token, true);
-        return claims.orElseThrow();
+        return validateAndReturnClaims(claims);
     }
 
-    public <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) {
+    private Jws<Claims> validateAndReturnClaims(Optional<Jws<Claims>> claims) throws UnAuthorizedException {
+        if (claims.isEmpty())
+            throw new UnAuthorizedException(Constants.UNAUTHORIZED_MESSAGE);
+        return claims.get();
+    }
+
+    public  <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
         var claims = getClaimsFromAccessToken(token);
         return claims.getBody().get(claimType, claimClass);
     }
 
-    public String getUsernameFromAccessToken(String token) {
+    public String getUsernameFromAccessToken(String token) throws UnAuthorizedException {
         var claims = getClaimsFromAccessToken(token);
         return claims.getBody().getSubject();
     }
 
-    public String getUsernameFromRefreshToken(String token) {
+    public String getUsernameFromRefreshToken(String token) throws UnAuthorizedException {
         var claims = getClaimsFromRefreshToken(token);
         return claims.getBody().getSubject();
     }
 
-    public Date getExpirationDateFromToken(String token) {
+    public Date getExpirationDateFromToken(String token) throws UnAuthorizedException {
         var claims = getClaimsFromAccessToken(token);
         return claims.getBody().getExpiration();
     }
 
-    public void expireToken(String token){
+    public void expireToken(String token) throws UnAuthorizedException {
         var claims = getClaimsFromAccessToken(token);
         claims.getBody().setExpiration(new Date());
     }
 
-    public String getRoleFromToken(String token) {
+    public String getRoleFromToken(String token) throws UnAuthorizedException {
         return getClaimFromToken(token, "role", String.class);
     }
 

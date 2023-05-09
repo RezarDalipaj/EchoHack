@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.service.impl;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
@@ -30,7 +31,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public TokenDto refreshToken(RefreshDto refreshDto) {
+    public TokenDto refreshToken(RefreshDto refreshDto) throws UnAuthorizedException {
         var username = tokenProvider.getUsernameFromRefreshToken(refreshDto.getRefreshToken());
         var user = userDetailsService.loadUserByUsername(username);
         var roles = tokenProvider.getRoleFromUser(user);

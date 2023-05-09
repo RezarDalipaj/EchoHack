@@ -18,7 +18,7 @@ public class UserService implements IUserService {
     public User findUserByEmail(String email) {
         var entity = userRepository.findByEmail(email);
         if (entity == null)
-            throw new NullPointerException("User with email " + email);
+            throw new NullPointerException("User with email " + email + " does not exist");
         return entity;
     }
 

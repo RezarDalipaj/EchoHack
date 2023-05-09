@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.service.schedule;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,13 @@ public class TokenScheduler {
     @Scheduled(initialDelay = 120000, fixedDelay = 300000)
     public void deleteRevokedTokens(){
         var expiredTokens = tokenRepository.findAll().stream().filter(token ->
-            (tokenProvider.getExpirationDateFromToken(token.getToken())).before(new Date())).toList();
+        {
+            try {
+                return (tokenProvider.getExpirationDateFromToken(token.getToken())).before(new Date());
+            } catch (UnAuthorizedException e) {
+                throw new NullPointerException("Token not valid");
+            }
+        }).toList();
         tokenRepository.deleteAll(expiredTokens);
     }
 }
