@@ -13,14 +13,19 @@ import java.util.List;
 @Setter
 public class OrderDto {
     private Long id;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String username;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdDate;
+
     private String comment;
+
     @NotNull
     @NotEmpty
     private List<OrderMealDto> meals;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double amountPayed;
 }
