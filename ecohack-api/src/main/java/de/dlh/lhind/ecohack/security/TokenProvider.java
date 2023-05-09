@@ -42,25 +42,14 @@ public class TokenProvider {
         this.jwtProperties = jwtProperties;
     }
 
-    public boolean tokenDoesNotExist(String token){
-        var entity = tokenRepository.findByToken(token);
-        return entity.isEmpty();
-    }
-
-    public String generate(Authentication authentication, Integer minutes) {
+    private String generateToken(Authentication authentication, boolean isAccess) {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
         var role = getRoleFromUser(user);
 
-        return buildAndSaveToken(user, role, minutes);
-    }
-
-    private void saveToken(String username, String token) {
-        var user = userService.findUserByEmail(username);
-        var tokenEntity = new Token();
-        tokenEntity.setUser(user);
-        tokenEntity.setToken(token);
-        tokenRepository.save(tokenEntity);
+        if (isAccess)
+            return buildAndSaveAccessToken(user, role);
+        return buildAndSaveRefreshToken(user, role);
     }
 
     public String getRoleFromUser(UserDetails userDetails){
@@ -71,28 +60,51 @@ public class TokenProvider {
                 .orElseThrow();
     }
 
-    public String buildAndSaveToken(UserDetails user, String roles, Integer minutes){
-        var signingKey = getSigningKeyFromMinutes(minutes);
+    public String buildAndSaveAccessToken(UserDetails user, String role) {
+        return buildAndSaveToken(user, role, true);
+    }
+    public String buildAndSaveRefreshToken(UserDetails user, String role){
+        return buildAndSaveToken(user, role, false);
+    }
+
+    private String buildAndSaveToken(UserDetails user, String role, boolean isAccess){
+        var signingKey = getKeyFromBoolean(isAccess);
         var token = Jwts.builder()
                 .setHeaderParam("type", TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(minutes).toInstant()))
+                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(getMinutesFromBoolean(isAccess)).toInstant()))
                 .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
                 .setId(UUID.randomUUID().toString())
                 .setIssuer(TOKEN_ISSUER)
                 .setAudience(TOKEN_AUDIENCE)
                 .setSubject(user.getUsername())
-                .claim("role", roles)
+                .claim("role", role)
                 .claim("preferred_username", user.getUsername())
                 .compact();
         saveToken(user.getUsername(), token);
         return token;
     }
 
-    private byte[] getSigningKeyFromMinutes(Integer minutes) {
-        if (minutes.equals(jwtProperties.getRefresh()))
-            return jwtSecret.getRefresh().getBytes();
-        return jwtSecret.getAccess().getBytes();
+    private Integer getMinutesFromBoolean (boolean isAccess) {
+        if (!isAccess)
+            return jwtProperties.getRefresh();
+        return jwtProperties.getAccess();
+    }
+
+    private void saveToken(String username, String token) {
+        var user = userService.findUserByEmail(username);
+        var tokenEntity = new Token();
+        tokenEntity.setUser(user);
+        tokenEntity.setToken(token);
+        tokenRepository.save(tokenEntity);
+    }
+
+    public String generateAccessToken(Authentication authentication){
+        return generateToken(authentication, true);
+    }
+
+    public String generateRefreshToken(Authentication authentication){
+        return generateToken(authentication, false);
     }
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccess) {
@@ -119,34 +131,49 @@ public class TokenProvider {
         return Optional.empty();
     }
 
+    public boolean tokenDoesNotExist(String token){
+        var entity = tokenRepository.findByToken(token);
+        return entity.isEmpty();
+    }
+
     public byte[] getKeyFromBoolean(boolean isAccess){
         if (isAccess)
             return jwtSecret.getAccess().getBytes();
         return jwtSecret.getRefresh().getBytes();
     }
 
-    private Jws<Claims> getClaimsFromToken(String token, boolean isAccess) {
-        var claims = validateTokenAndGetJws(token, isAccess);
+    private Jws<Claims> getClaimsFromRefreshToken(String token){
+        var claims = validateTokenAndGetJws(token, false);
+        return claims.orElseThrow();
+    }
+
+    private Jws<Claims> getClaimsFromAccessToken(String token) {
+        var claims = validateTokenAndGetJws(token, true);
         return claims.orElseThrow();
     }
 
     public <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) {
-        var claims = getClaimsFromToken(token, true);
+        var claims = getClaimsFromAccessToken(token);
         return claims.getBody().get(claimType, claimClass);
     }
 
-    public String getUsernameFromToken(String token, boolean isAccess) {
-        var claims = getClaimsFromToken(token, isAccess);
+    public String getUsernameFromAccessToken(String token) {
+        var claims = getClaimsFromAccessToken(token);
+        return claims.getBody().getSubject();
+    }
+
+    public String getUsernameFromRefreshToken(String token) {
+        var claims = getClaimsFromRefreshToken(token);
         return claims.getBody().getSubject();
     }
 
     public Date getExpirationDateFromToken(String token) {
-        var claims = getClaimsFromToken(token, true);
+        var claims = getClaimsFromAccessToken(token);
         return claims.getBody().getExpiration();
     }
 
     public void expireToken(String token){
-        var claims = getClaimsFromToken(token, true);
+        var claims = getClaimsFromAccessToken(token);
         claims.getBody().setExpiration(new Date());
     }
 

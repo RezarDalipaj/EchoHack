@@ -14,7 +14,7 @@ public class TokenUtil {
     private final TokenProvider tokenProvider;
     public String usernameFromToken(HttpServletRequest request) {
         var token = getTokenFromRequest(request);
-        return tokenProvider.getUsernameFromToken(token, true);
+        return tokenProvider.getUsernameFromAccessToken(token);
     }
 
     public String getTokenFromRequest(HttpServletRequest request){

@@ -1,6 +1,5 @@
 package de.dlh.lhind.ecohack.service.impl;
 
-import de.dlh.lhind.ecohack.config.JwtProperties;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
@@ -19,12 +18,11 @@ public class AuthService implements IAuthService {
     private final AuthenticationManager authenticationManager;
     private final IJwtUserDetailsService userDetailsService;
     private final TokenProvider tokenProvider;
-    private final JwtProperties jwtProperties;
 
     @Override
     public TokenDto login(LoginDto loginDto) {
-        String accessToken = authenticateAndGetToken(loginDto, jwtProperties.getAccess());
-        String refreshToken = authenticateAndGetToken(loginDto, jwtProperties.getRefresh());
+        String accessToken = authenticateAndGetAccessToken(loginDto);
+        String refreshToken = authenticateAndGetRefreshToken(loginDto);
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -33,21 +31,26 @@ public class AuthService implements IAuthService {
 
     @Override
     public TokenDto refreshToken(RefreshDto refreshDto) {
-        var username = tokenProvider.getUsernameFromToken
-                (refreshDto.getRefreshToken(), false);
+        var username = tokenProvider.getUsernameFromRefreshToken(refreshDto.getRefreshToken());
         var user = userDetailsService.loadUserByUsername(username);
         var roles = tokenProvider.getRoleFromUser(user);
-        String accessToken = tokenProvider.buildAndSaveToken(user, roles, jwtProperties.getAccess());
-        String refreshToken = tokenProvider.buildAndSaveToken(user, roles, jwtProperties.getRefresh());
+        String accessToken = tokenProvider.buildAndSaveAccessToken(user, roles);
+        String refreshToken = tokenProvider.buildAndSaveRefreshToken(user, roles);
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
     }
 
-    private String authenticateAndGetToken(LoginDto loginDto, Integer minutes) {
+    private String authenticateAndGetAccessToken(LoginDto loginDto) {
         var authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-        return tokenProvider.generate(authentication, minutes);
+        return tokenProvider.generateAccessToken(authentication);
+    }
+
+    private String authenticateAndGetRefreshToken(LoginDto loginDto) {
+        var authentication = authenticationManager.authenticate
+                (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        return tokenProvider.generateRefreshToken(authentication);
     }
 }
