@@ -2,6 +2,7 @@ package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.config.JwtProperties;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
+import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IAuthService;
@@ -31,7 +32,9 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public TokenDto refreshToken(String username) {
+    public TokenDto refreshToken(RefreshDto refreshDto) {
+        var username = tokenProvider.getUsernameFromToken
+                (refreshDto.getRefreshToken(), false);
         var user = userDetailsService.loadUserByUsername(username);
         var roles = tokenProvider.getRoleFromUser(user);
         String accessToken = tokenProvider.buildAndSaveToken(user, roles, jwtProperties.getAccess());

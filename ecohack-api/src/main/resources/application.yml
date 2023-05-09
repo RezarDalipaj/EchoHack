@@ -16,7 +16,9 @@ app:
   jwt:
     # Signing key for HS512 algorithm
     # In http://www.allkeysgenerator.com/ you can generate all kinds of keys
-    secret: geekSquad1617478ibsdcfidsbvnsdvbnvuinyvbnkbfisdigvbnsdvnfvusdbncdsuvsdnvbdsvdsuibyuvbsdfuy
+    secret:
+      access: geekSquad1617478ibsdcfidsbvnsdvbnvuinyvbnkbfisdigvbnsdvnfvusdbncdsuvsdnvbdsvdsuibyuvbsdfuy
+      refresh: fmwpiforenodnfofnoufmudsonrfnsdofnweuofnsdoufwnvmsduofehffhnohryjhpjypjhpympd[knt[okdfjsjg
     expiration:
       minutes:
         access: 10

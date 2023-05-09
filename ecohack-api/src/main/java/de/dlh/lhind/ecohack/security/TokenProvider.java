@@ -1,5 +1,7 @@
 package de.dlh.lhind.ecohack.security;
 
+import de.dlh.lhind.ecohack.config.JwtProperties;
+import de.dlh.lhind.ecohack.config.JwtSecret;
 import de.dlh.lhind.ecohack.model.entity.Token;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
@@ -13,7 +15,6 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,19 +32,19 @@ public class TokenProvider {
 
     private final TokenRepository tokenRepository;
     private final IUserService userService;
-    @Value("${app.jwt.secret}")
-    private String jwtSecret;
+    private final JwtSecret jwtSecret;
+    private final JwtProperties jwtProperties;
 
-    public TokenProvider(TokenRepository tokenRepository, @Lazy IUserService userService) {
+    public TokenProvider(TokenRepository tokenRepository, @Lazy IUserService userService, JwtSecret jwtSecret, JwtProperties jwtProperties) {
         this.tokenRepository = tokenRepository;
         this.userService = userService;
+        this.jwtSecret = jwtSecret;
+        this.jwtProperties = jwtProperties;
     }
 
-    public boolean tokenNotExistsOrIsRevoked(String token){
+    public boolean tokenDoesNotExist(String token){
         var entity = tokenRepository.findByToken(token);
-        if (entity.isEmpty())
-            return true;
-        return entity.get().isRevoked();
+        return entity.isEmpty();
     }
 
     public String generate(Authentication authentication, Integer minutes) {
@@ -59,7 +60,6 @@ public class TokenProvider {
         var tokenEntity = new Token();
         tokenEntity.setUser(user);
         tokenEntity.setToken(token);
-        tokenEntity.setRevoked(false);
         tokenRepository.save(tokenEntity);
     }
 
@@ -72,7 +72,7 @@ public class TokenProvider {
     }
 
     public String buildAndSaveToken(UserDetails user, String roles, Integer minutes){
-        byte[] signingKey = jwtSecret.getBytes();
+        var signingKey = getSigningKeyFromMinutes(minutes);
         var token = Jwts.builder()
                 .setHeaderParam("type", TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
@@ -89,13 +89,18 @@ public class TokenProvider {
         return token;
     }
 
-    public Optional<Jws<Claims>> validateTokenAndGetJws(String token) {
-        if (tokenNotExistsOrIsRevoked(token))
+    private byte[] getSigningKeyFromMinutes(Integer minutes) {
+        if (minutes.equals(jwtProperties.getRefresh()))
+            return jwtSecret.getRefresh().getBytes();
+        return jwtSecret.getAccess().getBytes();
+    }
+
+    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccess) {
+        if (tokenDoesNotExist(token))
             return Optional.empty();
         try {
-            byte[] signingKey = jwtSecret.getBytes();
             Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(signingKey)
+                    .setSigningKey(getKeyFromBoolean(isAccess))
                     .build()
                     .parseClaimsJws(token);
 
@@ -114,28 +119,34 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    private Jws<Claims> getClaimsFromToken(String token) {
-        var claims = validateTokenAndGetJws(token);
+    public byte[] getKeyFromBoolean(boolean isAccess){
+        if (isAccess)
+            return jwtSecret.getAccess().getBytes();
+        return jwtSecret.getRefresh().getBytes();
+    }
+
+    private Jws<Claims> getClaimsFromToken(String token, boolean isAccess) {
+        var claims = validateTokenAndGetJws(token, isAccess);
         return claims.orElseThrow();
     }
 
     public <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) {
-        var claims = getClaimsFromToken(token);
+        var claims = getClaimsFromToken(token, true);
         return claims.getBody().get(claimType, claimClass);
     }
 
-    public String getUsernameFromToken(String token) {
-        var claims = getClaimsFromToken(token);
+    public String getUsernameFromToken(String token, boolean isAccess) {
+        var claims = getClaimsFromToken(token, isAccess);
         return claims.getBody().getSubject();
     }
 
     public Date getExpirationDateFromToken(String token) {
-        var claims = getClaimsFromToken(token);
+        var claims = getClaimsFromToken(token, true);
         return claims.getBody().getExpiration();
     }
 
     public void expireToken(String token){
-        var claims = getClaimsFromToken(token);
+        var claims = getClaimsFromToken(token, true);
         claims.getBody().setExpiration(new Date());
     }
 

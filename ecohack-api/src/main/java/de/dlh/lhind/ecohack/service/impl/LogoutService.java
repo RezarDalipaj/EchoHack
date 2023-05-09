@@ -20,11 +20,10 @@ public class LogoutService implements ILogoutService {
     public void logout(HttpServletRequest request
             , HttpServletResponse response, Authentication authentication) {
         var token = tokenUtil.getTokenFromRequest(request);
+        // validating if request has an access token
+        tokenUtil.usernameFromToken(request);
         var storedToken = tokenRepository.findByToken(token).orElseThrow();
-        var loggedOutUser = storedToken.getUser();
-        var tokensOfUser = tokenRepository.findAllByUser(loggedOutUser);
-        tokensOfUser.forEach(tokenToBeRevoked ->
-                tokenToBeRevoked.setRevoked(true));
-        tokenRepository.saveAll(tokensOfUser);
+        tokenRepository.deleteById(storedToken.getId() + 1);
+        tokenRepository.delete(storedToken);
     }
 }

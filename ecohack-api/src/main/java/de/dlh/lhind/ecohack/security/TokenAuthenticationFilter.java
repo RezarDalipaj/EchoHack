@@ -1,6 +1,5 @@
 package de.dlh.lhind.ecohack.security;
 
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.FilterChain;
@@ -31,7 +30,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
             tokenUtil.getJwtFromRequest(request)
-                    .flatMap(tokenProvider::validateTokenAndGetJws)
+                    .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,true))
                     .ifPresent(jws -> {
                         String username = jws.getBody().getSubject();
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);

@@ -24,9 +24,6 @@ public class Token {
     @Column(columnDefinition = "TEXT")
     private String token;
 
-    @Column
-    private boolean revoked;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -19,9 +19,8 @@ public class TokenScheduler {
 
     @Scheduled(initialDelay = 120000, fixedDelay = 300000)
     public void deleteRevokedTokens(){
-        var expiredOrRevokedTokens = tokenRepository.findAll().stream().filter(token ->
-                (tokenProvider.getExpirationDateFromToken(token.getToken())).before(new Date())
-                || token.isRevoked()).toList();
-        tokenRepository.deleteAll(expiredOrRevokedTokens);
+        var expiredTokens = tokenRepository.findAll().stream().filter(token ->
+            (tokenProvider.getExpirationDateFromToken(token.getToken())).before(new Date())).toList();
+        tokenRepository.deleteAll(expiredTokens);
     }
 }

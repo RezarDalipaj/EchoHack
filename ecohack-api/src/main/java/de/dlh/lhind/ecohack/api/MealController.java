@@ -1,6 +1,5 @@
 package de.dlh.lhind.ecohack.api;
 
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.service.IMealService;
 import de.dlh.lhind.ecohack.util.TokenUtil;
@@ -32,15 +31,16 @@ public class MealController {
     }
 
     @PostMapping()
-    public ResponseEntity<MealDto> save(@Valid @RequestBody MealDto meal, HttpServletRequest request) throws UnAuthorizedException {
+    public ResponseEntity<MealDto> save(@Valid @RequestBody MealDto meal, HttpServletRequest request) {
         return ResponseEntity.ok(mealService.save(meal, tokenUtil.usernameFromToken(request)));
     }
 
     @GetMapping("/provider")
     @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
     public ResponseEntity<List<MealDto>> findAllByProviderId(@RequestParam int pageSize, @RequestParam int pageNumber
-            , HttpServletRequest request) throws UnAuthorizedException {
-        return ResponseEntity.ok(mealService.findAllByProviderUsername(tokenUtil.usernameFromToken(request), pageSize, pageNumber));
+            , HttpServletRequest request) {
+        return ResponseEntity.ok(mealService.findAllByProviderUsername(tokenUtil.usernameFromToken
+                (request), pageSize, pageNumber));
     }
 
 
