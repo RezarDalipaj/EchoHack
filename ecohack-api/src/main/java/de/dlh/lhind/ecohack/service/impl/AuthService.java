@@ -21,7 +21,7 @@ public class AuthService implements IAuthService {
     private final TokenProvider tokenProvider;
 
     @Override
-    public TokenDto login(LoginDto loginDto) {
+    public TokenDto login(LoginDto loginDto) throws UnAuthorizedException {
         String accessToken = authenticateAndGetAccessToken(loginDto);
         String refreshToken = authenticateAndGetRefreshToken(loginDto);
         return TokenDto.builder()
@@ -43,13 +43,13 @@ public class AuthService implements IAuthService {
                 .build();
     }
 
-    private String authenticateAndGetAccessToken(LoginDto loginDto) {
+    private String authenticateAndGetAccessToken(LoginDto loginDto) throws UnAuthorizedException {
         var authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         return tokenProvider.generateAccessToken(authentication);
     }
 
-    private String authenticateAndGetRefreshToken(LoginDto loginDto) {
+    private String authenticateAndGetRefreshToken(LoginDto loginDto) throws UnAuthorizedException {
         var authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
         return tokenProvider.generateRefreshToken(authentication);

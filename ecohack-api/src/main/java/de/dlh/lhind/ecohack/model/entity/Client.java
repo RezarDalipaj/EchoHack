@@ -46,6 +46,9 @@ public class Client {
     @Column
     private Integer rankingPoints;
 
+    @Column
+    private boolean takenQuiz;
+
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

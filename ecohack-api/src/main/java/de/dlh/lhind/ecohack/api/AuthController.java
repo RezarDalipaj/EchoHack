@@ -20,7 +20,7 @@ public class AuthController {
     private final IAuthService authService;
 
     @PostMapping("/auth/login")
-    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) {
+    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) throws UnAuthorizedException {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 

@@ -1,13 +1,16 @@
 package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ClientMapper;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
+import de.dlh.lhind.ecohack.model.dto.QuizDto;
+import de.dlh.lhind.ecohack.model.dto.QuizResponse;
+import de.dlh.lhind.ecohack.model.dto.ResultDto;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.Client;
-import de.dlh.lhind.ecohack.model.enumeration.Answers;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
 import de.dlh.lhind.ecohack.service.IAuthService;
@@ -27,51 +30,38 @@ public class ClientService implements IClientService {
     private final IUserService userService;
     private final IValidationService validationService;
     private final ClientMapper clientMapper;
+    private final QuizDto quizDto;
 
     @Override
-    public Integer savePoints(QuestionnaireDto questionnaire, Long clientId) {
-        Integer totalPoints = 0;
-
-        switch (questionnaire.getQuestionOneResult()) {
-            case 1 -> totalPoints += Answers.QUESTION_ONE_1.getPoints();
-            case 2 -> totalPoints += Answers.QUESTION_ONE_2.getPoints();
-            case 3 -> totalPoints += Answers.QUESTION_ONE_3.getPoints();
-            default -> totalPoints += 0;
-        }
-
-        switch (questionnaire.getQuestionTwoResult()) {
-            case 1 -> totalPoints += Answers.QUESTION_TWO_1.getPoints();
-            case 2 -> totalPoints += Answers.QUESTION_TWO_2.getPoints();
-            case 3 -> totalPoints += Answers.QUESTION_TWO_3.getPoints();
-            default -> totalPoints += 0;
-        }
-
-        switch (questionnaire.getQuestionThreeResult()) {
-            case 1 -> totalPoints += Answers.QUESTION_THREE_1.getPoints();
-            case 2 -> totalPoints += Answers.QUESTION_THREE_2.getPoints();
-            case 3 -> totalPoints += Answers.QUESTION_THREE_3.getPoints();
-            default -> totalPoints += 0;
-        }
-
-        switch (questionnaire.getQuestionFourResult()) {
-            case 1 -> totalPoints += Answers.QUESTION_FOUR_1.getPoints();
-            case 2 -> totalPoints += Answers.QUESTION_FOUR_2.getPoints();
-            case 3 -> totalPoints += Answers.QUESTION_FOUR_3.getPoints();
-            default -> totalPoints += 0;
-        }
-
-        //TODO: Update user points
-        return totalPoints;
+    public QuizResponse takeQuiz(QuestionnaireDto questionnaire, String username) throws BadRequestException {
+        var client = findClientByUsername(username);
+        if (client.isTakenQuiz())
+            throw new BadRequestException("You have taken the quiz once");
+        var totalPoints = calculatePoints(questionnaire);
+        client.setRankingPoints(totalPoints);
+        client.setTakenQuiz(true);
+        clientRepository.save(client);
+        return QuizResponse.builder()
+                .result("You got " + totalPoints + " points")
+                .build();
 
     }
 
-    @Override
-    public Integer saveClientPoints(QuestionnaireDto questionnaire, Long clientId) {
-        return null;
+    private Integer calculatePoints(QuestionnaireDto questionnaire) throws BadRequestException {
+        var questions = quizDto.getQuestions();
+        var results = questionnaire.getResults();
+        if (questions.size() != results.size())
+            throw new BadRequestException("Wrong results");
+        Integer points = 0;
+        var answers = results.stream().map(ResultDto::getResult).toList();
+        for (int i = 0; i < results.size(); i++) {
+            points += questions.get(i).getAnswers().get(answers.get(i)-1).getPoints();
+        }
+        return points;
     }
 
     @Override
-    public TokenDto save(ClientDto clientDto) throws BadRequestException {
+    public TokenDto save(ClientDto clientDto) throws BadRequestException, UnAuthorizedException {
         validateRegister(clientDto);
         var client = clientMapper.dtoToClient(clientDto);
         var user = client.getUser();

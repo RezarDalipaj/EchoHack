@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ProviderMapper;
 import de.dlh.lhind.ecohack.model.dto.ProviderDto;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
@@ -26,7 +27,7 @@ public class ProviderService implements IProviderService {
     private final IUserService userService;
 
     @Override
-    public TokenDto saveProvider(ProviderDto providerDto) throws BadRequestException {
+    public TokenDto saveProvider(ProviderDto providerDto) throws BadRequestException, UnAuthorizedException {
         validateProvider(providerDto);
         var provider = providerMapper.toProvider(providerDto);
         var user = provider.getUser();

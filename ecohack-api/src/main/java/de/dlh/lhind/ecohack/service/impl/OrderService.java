@@ -18,8 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
-
 @Service
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
@@ -29,8 +27,6 @@ public class OrderService implements IOrderService {
     @Override
     public void save(OrderDto orderDto, String username) throws BadRequestException {
         var client = clientService.findClientByUsername(username);
-        if (isEmpty(orderDto.getMeals()))
-            throw new BadRequestException("Order cannot be empty");
         var order = new Order();
         order.setClient(client);
         order.setComment(orderDto.getComment());

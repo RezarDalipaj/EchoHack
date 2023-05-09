@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -19,15 +17,13 @@ public class TokenScheduler {
     private final TokenProvider tokenProvider;
 
     @Scheduled(initialDelay = 120000, fixedDelay = 300000)
-    public void deleteRevokedTokens(){
-        var expiredTokens = tokenRepository.findAll().stream().filter(token ->
-        {
+    public void deleteExpiredTokens(){
+        tokenRepository.findAll().forEach(token -> {
             try {
-                return (tokenProvider.getExpirationDateFromToken(token.getToken())).before(new Date());
-            } catch (UnAuthorizedException e) {
-                throw new NullPointerException("Token not valid");
+                tokenProvider.getExpirationDateFromToken(token.getToken());
+            } catch (UnAuthorizedException unAuthorizedException){
+                tokenRepository.delete(token);
             }
-        }).toList();
-        tokenRepository.deleteAll(expiredTokens);
+        });
     }
 }

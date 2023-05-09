@@ -6,6 +6,6 @@ import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 
 public interface IAuthService {
-    TokenDto login(LoginDto loginDto);
+    TokenDto login(LoginDto loginDto) throws UnAuthorizedException;
     TokenDto refreshToken(RefreshDto refreshDto) throws UnAuthorizedException;
 }

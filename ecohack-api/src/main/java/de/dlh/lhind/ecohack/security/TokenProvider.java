@@ -6,7 +6,6 @@ import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.entity.Token;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
-import de.dlh.lhind.ecohack.util.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -44,7 +43,7 @@ public class TokenProvider {
         this.jwtProperties = jwtProperties;
     }
 
-    private String generateToken(Authentication authentication, boolean isAccess) {
+    private String generateToken(Authentication authentication, boolean isAccess) throws UnAuthorizedException {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
         var role = getRoleFromUser(user);
@@ -54,12 +53,12 @@ public class TokenProvider {
         return buildAndSaveRefreshToken(user, role);
     }
 
-    public String getRoleFromUser(UserDetails userDetails){
+    public String getRoleFromUser(UserDetails userDetails) throws UnAuthorizedException {
         return userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(UnAuthorizedException::new);
     }
 
     public String buildAndSaveAccessToken(UserDetails user, String role) {
@@ -101,11 +100,11 @@ public class TokenProvider {
         tokenRepository.save(tokenEntity);
     }
 
-    public String generateAccessToken(Authentication authentication){
+    public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
         return generateToken(authentication, true);
     }
 
-    public String generateRefreshToken(Authentication authentication){
+    public String generateRefreshToken(Authentication authentication) throws UnAuthorizedException {
         return generateToken(authentication, false);
     }
 
@@ -146,18 +145,12 @@ public class TokenProvider {
 
     private Jws<Claims> getClaimsFromRefreshToken(String token) throws UnAuthorizedException {
         var claims = validateTokenAndGetJws(token, false);
-        return validateAndReturnClaims(claims);
+        return claims.orElseThrow(UnAuthorizedException::new);
     }
 
     private Jws<Claims> getClaimsFromAccessToken(String token) throws UnAuthorizedException {
         var claims = validateTokenAndGetJws(token, true);
-        return validateAndReturnClaims(claims);
-    }
-
-    private Jws<Claims> validateAndReturnClaims(Optional<Jws<Claims>> claims) throws UnAuthorizedException {
-        if (claims.isEmpty())
-            throw new UnAuthorizedException(Constants.UNAUTHORIZED_MESSAGE);
-        return claims.get();
+        return claims.orElseThrow(UnAuthorizedException::new);
     }
 
     public  <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
