@@ -84,7 +84,15 @@ public class ClientService implements IClientService {
 
     @Override
     public ClientDto findById(Long clientId) {
-        return null;
+        return clientMapper.clientToDto(findEntityById(clientId));
+    }
+
+    @Override
+    public Client findEntityById(Long clientId){
+        var client = clientRepository.findById(clientId);
+        if (client.isEmpty())
+            throw new NullPointerException("Client with id " + clientId + " not found");
+        return client.get();
     }
 
     @Override
@@ -95,7 +103,9 @@ public class ClientService implements IClientService {
     @Override
     public Client findClientByUsername(String username) {
         var client = clientRepository.findByUser_Email(username);
-        return client.orElseThrow(NullPointerException::new);
+        if (client.isEmpty())
+            throw new NullPointerException("Client with username " + username + " not found");
+        return client.get();
     }
 
     private void validateRegister(ClientDto clientDto) throws BadRequestException {

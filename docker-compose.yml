@@ -2,24 +2,23 @@ version: '3.8'
 services:
 
   database:
-    container_name: ecohack-reference-database
+    container_name: ecoHack-reference-database
     image: mysql
-    restart: always
     ports:
       - "3306:3306"
     environment:
       # It is necessary to specify a root password. Options: MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD or MYSQL_RANDOM_ROOT_PASSWORD
       MYSQL_RANDOM_ROOT_PASSWORD: "true"
-      MYSQL_DATABASE: springbootdb
-      MYSQL_USER: usr_application
-      MYSQL_PASSWORD: usr_password
+      MYSQL_DATABASE: ecoFoodDb
+      MYSQL_USER: ecoHack
+      MYSQL_PASSWORD: ecoPassword
     healthcheck:
       test: "/usr/bin/mysql --user=\"$$MYSQL_USER\" --password=\"$$MYSQL_PASSWORD\" --execute=\"SHOW DATABASES;\""
       interval: 3s
       timeout: 1s
       retries: 20
     networks:
-      - networkgroup-backend
+      - networkGroup-backend
 #
 #  backend:
 #    container_name: app-backend
@@ -49,5 +48,5 @@ services:
 #      - networkgroup-client
 
 networks:
-  networkgroup-client:
-  networkgroup-backend:
+  networkGroup-client:
+  networkGroup-backend:

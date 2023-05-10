@@ -46,11 +46,9 @@ public class TokenProvider {
     private String generateToken(Authentication authentication, boolean isAccess) throws UnAuthorizedException {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
-        var role = getRoleFromUser(user);
-
         if (isAccess)
-            return buildAndSaveAccessToken(user, role);
-        return buildAndSaveRefreshToken(user, role);
+            return buildAndSaveAccessToken(user);
+        return buildAndSaveRefreshToken(user);
     }
 
     public String getRoleFromUser(UserDetails userDetails) throws UnAuthorizedException {
@@ -61,14 +59,14 @@ public class TokenProvider {
                 .orElseThrow(UnAuthorizedException::new);
     }
 
-    public String buildAndSaveAccessToken(UserDetails user, String role) {
-        return buildAndSaveToken(user, role, true);
+    public String buildAndSaveAccessToken(UserDetails user) throws UnAuthorizedException {
+        return buildAndSaveToken(user, true);
     }
-    public String buildAndSaveRefreshToken(UserDetails user, String role){
-        return buildAndSaveToken(user, role, false);
+    public String buildAndSaveRefreshToken(UserDetails user) throws UnAuthorizedException {
+        return buildAndSaveToken(user, false);
     }
 
-    private String buildAndSaveToken(UserDetails user, String role, boolean isAccess){
+    private String buildAndSaveToken(UserDetails user, boolean isAccess) throws UnAuthorizedException {
         var signingKey = getKeyFromBoolean(isAccess);
         var token = Jwts.builder()
                 .setHeaderParam("type", TOKEN_TYPE)
@@ -79,7 +77,7 @@ public class TokenProvider {
                 .setIssuer(TOKEN_ISSUER)
                 .setAudience(TOKEN_AUDIENCE)
                 .setSubject(user.getUsername())
-                .claim("role", role)
+                .claim("role", getRoleFromUser(user))
                 .claim("preferred_username", user.getUsername())
                 .compact();
         saveToken(user.getUsername(), token);

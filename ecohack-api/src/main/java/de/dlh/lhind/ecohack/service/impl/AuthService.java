@@ -9,7 +9,6 @@ import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +22,8 @@ public class AuthService implements IAuthService {
     @Override
     public TokenDto login(LoginDto loginDto) throws UnAuthorizedException {
         String accessToken = authenticateAndGetAccessToken(loginDto);
-        String refreshToken = authenticateAndGetRefreshToken(loginDto);
+        var user = userDetailsService.loadUserByUsername(loginDto.getUsername());
+        String refreshToken = tokenProvider.buildAndSaveRefreshToken(user);
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -34,9 +34,8 @@ public class AuthService implements IAuthService {
     public TokenDto refreshToken(String refreshToken) throws UnAuthorizedException {
         var username = tokenProvider.getUsernameFromRefreshToken(refreshToken);
         var user = userDetailsService.loadUserByUsername(username);
-        var roles = tokenProvider.getRoleFromUser(user);
-        String accessToken = tokenProvider.buildAndSaveAccessToken(user, roles);
-        String newRefreshToken = tokenProvider.buildAndSaveRefreshToken(user, roles);
+        String accessToken = tokenProvider.buildAndSaveAccessToken(user);
+        String newRefreshToken = tokenProvider.buildAndSaveRefreshToken(user);
         return TokenDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(newRefreshToken)
@@ -44,15 +43,8 @@ public class AuthService implements IAuthService {
     }
 
     private String authenticateAndGetAccessToken(LoginDto loginDto) throws UnAuthorizedException {
-        return tokenProvider.generateAccessToken(getAuthenticationFromLogin(loginDto));
-    }
-
-    private String authenticateAndGetRefreshToken(LoginDto loginDto) throws UnAuthorizedException {
-        return tokenProvider.generateRefreshToken(getAuthenticationFromLogin(loginDto));
-    }
-
-    private Authentication getAuthenticationFromLogin(LoginDto loginDto){
-        return authenticationManager.authenticate
+        var authentication = authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        return tokenProvider.generateAccessToken(authentication);
     }
 }

@@ -43,7 +43,7 @@ public class ProviderService implements IProviderService {
     public FoodProvider findByEmail(String email) {
         var provider = providerRepository.findByUser_Email(email);
         if (provider == null)
-            throw new NullPointerException("Provider doesnt exist");
+            throw new NullPointerException("Provider with username " + email + " doesnt exist");
         return provider;
     }
 
@@ -55,7 +55,7 @@ public class ProviderService implements IProviderService {
 
     private void validateNipt(String nipt) throws BadRequestException {
         if (providerRepository.existsByNipt(nipt))
-            throw new BadRequestException("Provider with this nipt already exists");
+            throw new BadRequestException("Provider with nipt " + nipt + " already exists");
     }
 
     private void validateName(String name) throws BadRequestException {

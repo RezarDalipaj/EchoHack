@@ -70,7 +70,9 @@ public class MealService implements IMealService {
     @Override
     public Meal findEntityById(Long id) {
         Optional<Meal> mealOptional = mealRepository.findById(id);
-        return mealOptional.orElseThrow(NullPointerException::new);
+        if (mealOptional.isEmpty())
+            throw new NullPointerException("Meal with id " + id + " doesn't exist");
+        return mealOptional.get();
     }
 
     @Override

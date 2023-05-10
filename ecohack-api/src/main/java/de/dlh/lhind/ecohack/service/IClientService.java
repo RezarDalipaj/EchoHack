@@ -15,6 +15,9 @@ public interface IClientService {
     QuizResponse takeQuiz(QuestionnaireDto questionnaire, String username) throws BadRequestException;
     Integer getPoints(String username);
     ClientDto findById(Long clientId);
+
+    Client findEntityById(Long clientId);
+
     ClientDto findByUsername(String username);
     Client findClientByUsername(String username);
 }
