@@ -16,13 +16,22 @@ public class TokenScheduler {
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;
 
-    @Scheduled(initialDelay = 120000, fixedDelay = 300000)
+    @Scheduled(initialDelay = 60000, fixedDelay = 180000)
     public void deleteExpiredTokens(){
+        log.info("Executing scheduler");
         tokenRepository.findAll().forEach(token -> {
+            // if it's a valid access token don't do anything
             try {
-                tokenProvider.getExpirationDateFromToken(token.getToken());
+                tokenProvider.getUsernameFromAccessToken(token.getValue());
             } catch (UnAuthorizedException unAuthorizedException){
-                tokenRepository.delete(token);
+                // if it's a valid refresh token don't do anything
+                try {
+                    tokenProvider.getUsernameFromRefreshToken(token.getValue());
+                } catch (UnAuthorizedException e) {
+                    // else delete the token
+                    tokenRepository.delete(token);
+                    log.warn("Deleted token with id {} from db", token.getId());
+                }
             }
         });
     }

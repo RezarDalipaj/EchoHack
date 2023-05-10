@@ -96,7 +96,7 @@ public class TokenProvider {
         var user = userService.findUserByEmail(username);
         var tokenEntity = new Token();
         tokenEntity.setUser(user);
-        tokenEntity.setToken(token);
+        tokenEntity.setValue(token);
         tokenRepository.save(tokenEntity);
     }
 
@@ -133,7 +133,7 @@ public class TokenProvider {
     }
 
     private boolean tokenDoesNotExist(String token){
-        var entity = tokenRepository.findByToken(token);
+        var entity = tokenRepository.findByValue(token);
         return entity.isEmpty();
     }
 

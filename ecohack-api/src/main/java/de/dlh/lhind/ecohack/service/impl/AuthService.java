@@ -2,7 +2,6 @@ package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
-import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IAuthService;
@@ -10,6 +9,7 @@ import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,27 +31,28 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public TokenDto refreshToken(RefreshDto refreshDto) throws UnAuthorizedException {
-        var username = tokenProvider.getUsernameFromRefreshToken(refreshDto.getRefreshToken());
+    public TokenDto refreshToken(String refreshToken) throws UnAuthorizedException {
+        var username = tokenProvider.getUsernameFromRefreshToken(refreshToken);
         var user = userDetailsService.loadUserByUsername(username);
         var roles = tokenProvider.getRoleFromUser(user);
         String accessToken = tokenProvider.buildAndSaveAccessToken(user, roles);
-        String refreshToken = tokenProvider.buildAndSaveRefreshToken(user, roles);
+        String newRefreshToken = tokenProvider.buildAndSaveRefreshToken(user, roles);
         return TokenDto.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .refreshToken(newRefreshToken)
                 .build();
     }
 
     private String authenticateAndGetAccessToken(LoginDto loginDto) throws UnAuthorizedException {
-        var authentication = authenticationManager.authenticate
-                (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-        return tokenProvider.generateAccessToken(authentication);
+        return tokenProvider.generateAccessToken(getAuthenticationFromLogin(loginDto));
     }
 
     private String authenticateAndGetRefreshToken(LoginDto loginDto) throws UnAuthorizedException {
-        var authentication = authenticationManager.authenticate
+        return tokenProvider.generateRefreshToken(getAuthenticationFromLogin(loginDto));
+    }
+
+    private Authentication getAuthenticationFromLogin(LoginDto loginDto){
+        return authenticationManager.authenticate
                 (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
-        return tokenProvider.generateRefreshToken(authentication);
     }
 }

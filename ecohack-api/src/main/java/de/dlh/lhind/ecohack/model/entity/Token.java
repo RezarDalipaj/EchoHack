@@ -22,7 +22,7 @@ public class Token {
     private Long id;
 
     @Column(columnDefinition = "TEXT")
-    private String token;
+    private String value;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

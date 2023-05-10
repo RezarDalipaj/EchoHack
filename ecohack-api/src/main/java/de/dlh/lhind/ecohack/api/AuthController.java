@@ -2,12 +2,15 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
-import de.dlh.lhind.ecohack.model.dto.request.RefreshDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.service.IAuthService;
+import de.dlh.lhind.ecohack.util.Constants;
+import de.dlh.lhind.ecohack.util.TokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,14 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final IAuthService authService;
+    private final TokenUtil tokenUtil;
 
     @PostMapping("/auth/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) throws UnAuthorizedException {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 
-    @PostMapping("/auth/refresh/token")
-    public ResponseEntity<TokenDto> refreshToken(@Valid @RequestBody RefreshDto refreshDto) throws UnAuthorizedException {
-        return ResponseEntity.ok(authService.refreshToken(refreshDto));
+    @GetMapping(Constants.REFRESH_PATH)
+    public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) throws UnAuthorizedException {
+        return ResponseEntity.ok(authService.refreshToken(tokenUtil.getTokenFromRequest(request)));
     }
 }

@@ -31,7 +31,7 @@ public class LogoutService implements ILogoutService {
             log.error(Constants.UNAUTHORIZED_MESSAGE);
             return;
         }
-        var storedToken = tokenRepository.findByToken(token).orElseThrow();
+        var storedToken = tokenRepository.findByValue(token).orElseThrow();
         tokenRepository.deleteById(storedToken.getId() + 1);
         tokenRepository.delete(storedToken);
     }

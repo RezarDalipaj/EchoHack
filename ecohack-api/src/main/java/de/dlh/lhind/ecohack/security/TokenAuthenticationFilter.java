@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.security;
 
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
+import de.dlh.lhind.ecohack.util.Constants;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,8 +30,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
+            var isAccess = !isRefreshEndpoint(request);
             tokenUtil.getJwtFromRequest(request)
-                    .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,true))
+                    .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,isAccess))
                     .ifPresent(jws -> {
                         String username = jws.getBody().getSubject();
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -43,5 +45,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             log.error("Cannot set user authentication", e);
         }
         chain.doFilter(request, response);
+    }
+
+    private boolean isRefreshEndpoint(HttpServletRequest request) {
+        var endpoint = request.getRequestURL().toString();
+        return endpoint.contains(Constants.REFRESH_PATH);
     }
 }
