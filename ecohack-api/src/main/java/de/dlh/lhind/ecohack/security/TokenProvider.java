@@ -43,20 +43,10 @@ public class TokenProvider {
         this.jwtProperties = jwtProperties;
     }
 
-    private String generateToken(Authentication authentication, boolean isAccess) throws UnAuthorizedException {
+    public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
-        if (isAccess)
-            return buildAndSaveAccessToken(user);
-        return buildAndSaveRefreshToken(user);
-    }
-
-    public String getRoleFromUser(UserDetails userDetails) throws UnAuthorizedException {
-        return userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElseThrow(UnAuthorizedException::new);
+        return buildAndSaveAccessToken(user);
     }
 
     public String buildAndSaveAccessToken(UserDetails user) throws UnAuthorizedException {
@@ -66,7 +56,7 @@ public class TokenProvider {
         return buildAndSaveToken(user, false);
     }
 
-    private String buildAndSaveToken(UserDetails user, boolean isAccess) throws UnAuthorizedException {
+    private String buildAndSaveToken(UserDetails user, Boolean isAccess) throws UnAuthorizedException {
         var signingKey = getKeyFromBoolean(isAccess);
         var token = Jwts.builder()
                 .setHeaderParam("type", TOKEN_TYPE)
@@ -84,10 +74,18 @@ public class TokenProvider {
         return token;
     }
 
-    private Integer getMinutesFromBoolean (boolean isAccess) {
-        if (!isAccess)
-            return jwtProperties.getRefresh();
-        return jwtProperties.getAccess();
+    private String getRoleFromUser(UserDetails userDetails) throws UnAuthorizedException {
+        return userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElseThrow(UnAuthorizedException::new);
+    }
+
+    private Integer getMinutesFromBoolean (Boolean isAccess) {
+        if (Boolean.TRUE.equals(isAccess))
+            return jwtProperties.getAccess();
+        return jwtProperties.getRefresh();
     }
 
     private void saveToken(String username, String token) {
@@ -98,15 +96,7 @@ public class TokenProvider {
         tokenRepository.save(tokenEntity);
     }
 
-    public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
-        return generateToken(authentication, true);
-    }
-
-    public String generateRefreshToken(Authentication authentication) throws UnAuthorizedException {
-        return generateToken(authentication, false);
-    }
-
-    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccess) {
+    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, Boolean isAccess) {
         if (tokenDoesNotExist(token))
             return Optional.empty();
         try {
@@ -117,15 +107,15 @@ public class TokenProvider {
 
             return Optional.of(jws);
         } catch (ExpiredJwtException exception) {
-            log.error("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
+            log.error("Request to parse expired JWT failed : {}", exception.getMessage());
         } catch (UnsupportedJwtException exception) {
-            log.error("Request to parse unsupported JWT : {} failed : {}", token, exception.getMessage());
+            log.error("Request to parse unsupported JWT failed : {}", exception.getMessage());
         } catch (MalformedJwtException exception) {
-            log.error("Request to parse invalid JWT : {} failed : {}", token, exception.getMessage());
+            log.error("Request to parse invalid JWT failed : {}", exception.getMessage());
         } catch (SignatureException exception) {
-            log.error("Request to parse JWT with invalid signature : {} failed : {}", token, exception.getMessage());
+            log.error("Request to parse JWT with invalid signature failed : {}", exception.getMessage());
         } catch (IllegalArgumentException exception) {
-            log.error("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
+            log.error("Request to parse empty or null JWT failed : {}", exception.getMessage());
         }
         return Optional.empty();
     }
@@ -135,8 +125,8 @@ public class TokenProvider {
         return entity.isEmpty();
     }
 
-    private byte[] getKeyFromBoolean(boolean isAccess){
-        if (isAccess)
+    private byte[] getKeyFromBoolean(Boolean isAccess){
+        if (Boolean.TRUE.equals(isAccess))
             return jwtSecret.getAccess().getBytes();
         return jwtSecret.getRefresh().getBytes();
     }
