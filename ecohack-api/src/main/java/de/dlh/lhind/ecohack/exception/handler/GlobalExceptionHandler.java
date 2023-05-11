@@ -8,41 +8,39 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 
 @ControllerAdvice
-public class ExceptionHandler {
-    @org.springframework.web.bind.annotation.ExceptionHandler(NullPointerException.class)
+public class GlobalExceptionHandler {
+    @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorDto> handleNullPointerException(NullPointerException nullPointerException){
-        var errorDto = ErrorDto.builder().build();
-        if (nullPointerException.getMessage() == null)
-            errorDto.setMessage(Constants.NOT_FOUND_MESSAGE);
-        else
-            errorDto.setMessage(nullPointerException.getMessage());
-        errorDto.setStatus(HttpStatus.NOT_FOUND);
+        var errorDto = ErrorDto.builder()
+                .status(HttpStatus.NOT_FOUND)
+                .message(nullPointerException.getMessage() == null ? Constants.NOT_FOUND_MESSAGE : nullPointerException.getMessage())
+                .build();
         return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorDto> handleBadRequestException(BadRequestException badRequestException){
         var errorDto = buildError(badRequestException, HttpStatus.BAD_REQUEST);
         return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(UnAuthorizedException.class)
+    @ExceptionHandler(UnAuthorizedException.class)
     public ResponseEntity<ErrorDto> handleUnauthorizedException(UnAuthorizedException unAuthorizedException){
         var errorDto = buildError(unAuthorizedException, HttpStatus.UNAUTHORIZED);
         return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorDto> handleAccessDeniedException(AccessDeniedException accessDeniedException){
         var errorDto = buildError(accessDeniedException, HttpStatus.FORBIDDEN);
         return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception exception){
         var errorDto = buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
         return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
