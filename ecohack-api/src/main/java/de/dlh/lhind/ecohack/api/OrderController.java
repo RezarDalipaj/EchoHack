@@ -22,7 +22,7 @@ public class OrderController {
     private final IOrderService orderService;
     private final TokenUtil tokenUtil;
 
-    @PreAuthorize("hasAuthority('FOOD_PROVIDER')")
+    @PreAuthorize("hasAuthority('CLIENT')")
     @PostMapping
     public void saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException, UnAuthorizedException {
         orderService.save(orderDto, tokenUtil.usernameFromToken(request));

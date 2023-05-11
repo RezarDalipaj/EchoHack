@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ public class ClientController {
         return ResponseEntity.ok(clientService.save(clientDto));
     }
 
+    @PreAuthorize("hasAuthority('CLIENT')")
     @PostMapping("/take/quiz")
     public ResponseEntity<QuizResponse> takeQuiz(@Valid @RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) throws UnAuthorizedException, BadRequestException {
         return ResponseEntity.ok(clientService.takeQuiz(questionnaireDto, tokenUtil.usernameFromToken(request)));

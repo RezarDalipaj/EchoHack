@@ -31,7 +31,7 @@ public class ProviderService implements IProviderService {
         validateProvider(providerDto);
         var provider = providerMapper.toProvider(providerDto);
         var user = provider.getUser();
-        provider.setUser(userService.save(user, Role.FOOD_PROVIDER));
+        provider.setUser(userService.save(user, Role.PROVIDER));
         providerRepository.save(provider);
         var login = new LoginDto();
         login.setUsername(providerDto.getUsername());
