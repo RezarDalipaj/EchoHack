@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ErrorDto> handleNullPointerException(NullPointerException nullPointerException){
+    public ResponseEntity<ErrorDto> handleNullPointerException(NullPointerException nullException){
         var errorDto = ErrorDto.builder()
                 .status(HttpStatus.NOT_FOUND)
-                .message(nullPointerException.getMessage() == null ? Constants.NOT_FOUND_MESSAGE : nullPointerException.getMessage())
+                .message(nullException.getMessage() == null ? Constants.NOT_FOUND_MESSAGE : nullException.getMessage())
                 .build();
         return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
     }

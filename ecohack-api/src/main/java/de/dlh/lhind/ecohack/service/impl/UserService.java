@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.service.impl;
 
+import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.UserRepository;
@@ -28,6 +29,12 @@ public class UserService implements IUserService {
         user.setRole(role);
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public void validateUsername(String username) throws BadRequestException {
+        if (userRepository.existsByEmail(username))
+            throw new BadRequestException("Username already exists");
     }
 
 }

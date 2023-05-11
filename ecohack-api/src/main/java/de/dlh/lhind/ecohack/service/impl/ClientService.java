@@ -16,7 +16,6 @@ import de.dlh.lhind.ecohack.repository.ClientRepository;
 import de.dlh.lhind.ecohack.service.IAuthService;
 import de.dlh.lhind.ecohack.service.IClientService;
 import de.dlh.lhind.ecohack.service.IUserService;
-import de.dlh.lhind.ecohack.service.IValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,6 @@ public class ClientService implements IClientService {
     private final ClientRepository clientRepository;
     private final IAuthService authService;
     private final IUserService userService;
-    private final IValidationService validationService;
     private final ClientMapper clientMapper;
     private final QuizDto quizDto;
 
@@ -109,7 +107,7 @@ public class ClientService implements IClientService {
     }
 
     private void validateRegister(ClientDto clientDto) throws BadRequestException {
-        validationService.validateUsername(clientDto.getUsername());
+        userService.validateUsername(clientDto.getUsername());
     }
 
 }

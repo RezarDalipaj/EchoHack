@@ -6,6 +6,7 @@ import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.entity.Token;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
+import de.dlh.lhind.ecohack.util.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -26,8 +27,6 @@ import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-
-import static de.dlh.lhind.ecohack.util.Constants.Token.*;
 
 @Slf4j
 @Component
@@ -61,13 +60,13 @@ public class TokenProvider {
     private String buildAndSaveToken(UserDetails user, Boolean isAccess) throws UnAuthorizedException {
         var signingKey = getKeyFromBoolean(isAccess);
         var token = Jwts.builder()
-                .setHeaderParam("type", TOKEN_TYPE)
+                .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(getMinutesFromBoolean(isAccess)).toInstant()))
                 .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
                 .setId(UUID.randomUUID().toString())
-                .setIssuer(TOKEN_ISSUER)
-                .setAudience(TOKEN_AUDIENCE)
+                .setIssuer(Constants.Token.TOKEN_ISSUER)
+                .setAudience(Constants.Token.TOKEN_AUDIENCE)
                 .setSubject(user.getUsername())
                 .claim("role", getRoleFromUser(user))
                 .claim("preferred_username", user.getUsername())

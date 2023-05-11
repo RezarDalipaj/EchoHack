@@ -12,7 +12,6 @@ import de.dlh.lhind.ecohack.repository.FoodProviderRepository;
 import de.dlh.lhind.ecohack.service.IAuthService;
 import de.dlh.lhind.ecohack.service.IProviderService;
 import de.dlh.lhind.ecohack.service.IUserService;
-import de.dlh.lhind.ecohack.service.IValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Service;
 public class ProviderService implements IProviderService {
 
     private final FoodProviderRepository providerRepository;
-    private final IValidationService validationService;
     private final IAuthService authService;
     private final ProviderMapper providerMapper;
     private final IUserService userService;
@@ -48,7 +46,7 @@ public class ProviderService implements IProviderService {
     }
 
     private void validateProvider(ProviderDto providerDto) throws BadRequestException {
-        validationService.validateUsername(providerDto.getUsername());
+        userService.validateUsername(providerDto.getUsername());
         validateName(providerDto.getName());
         validateNipt(providerDto.getNipt());
     }

@@ -23,13 +23,10 @@ public class TokenUtil {
     }
 
     public Optional<String> getJwtFromRequest(HttpServletRequest request) {
-        String tokenHeader = request.getHeader(TOKEN_HEADER);
-        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(TOKEN_PREFIX)) {
-            return Optional.of(tokenHeader.replace(TOKEN_PREFIX, ""));
+        String tokenHeader = request.getHeader(Constants.Token.TOKEN_HEADER);
+        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(Constants.Token.TOKEN_PREFIX)) {
+            return Optional.of(tokenHeader.replace(Constants.Token.TOKEN_PREFIX, ""));
         }
         return Optional.empty();
     }
-
-    public static final String TOKEN_HEADER = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer ";
 }
