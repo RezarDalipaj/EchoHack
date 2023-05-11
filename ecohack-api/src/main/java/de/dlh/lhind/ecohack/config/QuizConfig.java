@@ -4,7 +4,7 @@ import de.dlh.lhind.ecohack.model.dto.AnswerDto;
 import de.dlh.lhind.ecohack.model.dto.QuestionDto;
 import de.dlh.lhind.ecohack.model.dto.QuizDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 
@@ -16,7 +16,7 @@ public class QuizConfig {
 
     private final QuizDto quizDto;
 
-    @EventListener(ApplicationStartedEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void onApplicationEvent() {
         quizDto.setQuestions(createQuestions());
     }

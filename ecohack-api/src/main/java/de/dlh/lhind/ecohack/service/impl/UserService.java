@@ -27,8 +27,7 @@ public class UserService implements IUserService {
     public User save(User user, Role role){
         user.setPassword(bcryptEncoder.encode(user.getPassword()));
         user.setRole(role);
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     @Override
