@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
+import static de.dlh.lhind.ecohack.util.Constants.Token.*;
+
 @Slf4j
 @Component
 public class TokenProvider {
@@ -169,9 +171,5 @@ public class TokenProvider {
     public String getRoleFromToken(String token) throws UnAuthorizedException {
         return getClaimFromToken(token, "role", String.class);
     }
-
-    public static final String TOKEN_TYPE = "JWT";
-    public static final String TOKEN_ISSUER = "order-api";
-    public static final String TOKEN_AUDIENCE = "order-app";
 }
 

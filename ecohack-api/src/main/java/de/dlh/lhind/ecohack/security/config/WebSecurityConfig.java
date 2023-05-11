@@ -40,8 +40,6 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests()
-				.requestMatchers(HttpMethod.GET, "/api/users/me").hasAnyAuthority(ADMIN, USER)
-				.requestMatchers("/api/users", "/api/users/**").hasAnyAuthority(ADMIN)
 				.requestMatchers("/public/**", "/auth/**", "/oauth2/**").permitAll()
 				.requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
 				.anyRequest().authenticated();
@@ -59,7 +57,4 @@ public class WebSecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-
-	public static final String ADMIN = "ADMIN";
-	public static final String USER = "USER";
 }

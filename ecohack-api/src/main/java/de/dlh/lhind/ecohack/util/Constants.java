@@ -8,4 +8,10 @@ public class Constants {
     public static final String NOT_FOUND_MESSAGE = "Not found";
     public static final String UNAUTHORIZED_MESSAGE = "Unauthorized!";
     public static final String REFRESH_PATH = "/refresh/token";
+
+    public static final class Token {
+        public static final String TOKEN_TYPE = "JWT";
+        public static final String TOKEN_ISSUER = "order-api";
+        public static final String TOKEN_AUDIENCE = "order-app";
+    }
 }

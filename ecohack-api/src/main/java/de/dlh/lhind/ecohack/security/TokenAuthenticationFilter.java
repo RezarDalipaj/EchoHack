@@ -30,9 +30,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-            var isAccess = isNotRefreshEndpoint(request);
             tokenUtil.getJwtFromRequest(request)
-                    .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,isAccess))
+                    .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,isNotRefreshEndpoint(request)))
                     .ifPresent(jws -> {
                         String username = jws.getBody().getSubject();
                         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
