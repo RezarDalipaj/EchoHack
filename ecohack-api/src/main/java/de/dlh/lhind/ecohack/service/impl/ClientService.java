@@ -55,7 +55,7 @@ public class ClientService implements IClientService {
         for (int i = 0; i < results.size(); i++) {
             points += questions.get(i).getAnswers().get(answers.get(i)-1).getPoints();
         }
-        return points;
+        return points/ results.size();
     }
 
     @Override

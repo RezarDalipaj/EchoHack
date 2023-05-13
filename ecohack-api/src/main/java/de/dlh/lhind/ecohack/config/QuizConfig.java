@@ -21,7 +21,7 @@ public class QuizConfig {
         quizDto.setQuestions(createQuestions());
     }
 
-    public List<QuestionDto> createQuestions(){
+    private List<QuestionDto> createQuestions(){
         var answers = List.of(createAnswer("Answer 1", 2, 1),
                 createAnswer("Answer 2", 5, 2),
                 createAnswer("Answer 3", 1, 3),
