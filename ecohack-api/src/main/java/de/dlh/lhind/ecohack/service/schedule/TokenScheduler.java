@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -17,6 +18,7 @@ public class TokenScheduler {
     private final TokenProvider tokenProvider;
 
     @Scheduled(initialDelay = 60000, fixedDelay = 180000)
+    @Transactional
     public void deleteExpiredTokens(){
         log.info("Executing scheduler");
         tokenRepository.findAll().forEach(token -> {

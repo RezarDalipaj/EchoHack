@@ -18,6 +18,7 @@ import de.dlh.lhind.ecohack.service.IClientService;
 import de.dlh.lhind.ecohack.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -31,6 +32,7 @@ public class ClientService implements IClientService {
     private final QuizDto quizDto;
 
     @Override
+    @Transactional
     public QuizResponse takeQuiz(QuestionnaireDto questionnaire, String username) throws BadRequestException {
         var client = findClientByUsername(username);
         if (client.isTakenQuiz())
@@ -59,6 +61,7 @@ public class ClientService implements IClientService {
     }
 
     @Override
+    @Transactional
     public TokenDto save(ClientDto clientDto) throws BadRequestException, UnAuthorizedException {
         validateRegister(clientDto);
         var client = clientMapper.dtoToClient(clientDto);

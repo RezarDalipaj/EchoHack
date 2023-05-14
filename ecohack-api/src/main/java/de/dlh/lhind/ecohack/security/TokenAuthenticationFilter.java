@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,8 +32,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             tokenUtil.getJwtFromRequest(request)
                     .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,isNotRefreshEndpoint(request)))
                     .ifPresent(jws -> {
-                        String username = jws.getBody().getSubject();
-                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                        var username = jws.getBody().getSubject();
+                        var userDetails = userDetailsService.loadUserByUsername(username);
                         var authentication = new UsernamePasswordAuthenticationToken
                         (userDetails, null, userDetails.getAuthorities());
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

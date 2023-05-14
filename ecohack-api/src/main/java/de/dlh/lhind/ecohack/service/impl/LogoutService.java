@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class LogoutService implements ILogoutService {
     private final TokenUtil tokenUtil;
 
     @Override
+    @Transactional
     public void logout(HttpServletRequest request
             , HttpServletResponse response, Authentication authentication) {
         var token = tokenUtil.getTokenFromRequest(request);

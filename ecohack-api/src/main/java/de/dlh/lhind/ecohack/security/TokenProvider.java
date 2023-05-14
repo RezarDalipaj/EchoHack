@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -89,7 +90,8 @@ public class TokenProvider {
         return jwtProperties.getRefresh();
     }
 
-    private void saveToken(String username, String token) {
+    @Transactional
+    public void saveToken(String username, String token) {
         var user = userService.findUserByEmail(username);
         var tokenEntity = new Token();
         tokenEntity.setUser(user);

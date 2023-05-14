@@ -7,6 +7,7 @@ import de.dlh.lhind.ecohack.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -15,41 +16,44 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorDto> handleNullPointerException(NullPointerException nullException){
-        var errorDto = ErrorDto.builder()
-                .status(HttpStatus.NOT_FOUND)
-                .message(nullException.getMessage() == null ? Constants.NOT_FOUND_MESSAGE : nullException.getMessage())
-                .build();
-        return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
+        return buildError(nullException.getMessage() == null ? Constants.NOT_FOUND_MESSAGE
+                : nullException.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorDto> handleBadRequestException(BadRequestException badRequestException){
-        var errorDto = buildError(badRequestException, HttpStatus.BAD_REQUEST);
-        return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
+        return getError(badRequestException, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
     public ResponseEntity<ErrorDto> handleUnauthorizedException(UnAuthorizedException unAuthorizedException){
-        var errorDto = buildError(unAuthorizedException, HttpStatus.UNAUTHORIZED);
-        return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
+        return getError(unAuthorizedException, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorDto> handleAccessDeniedException(AccessDeniedException accessDeniedException){
-        var errorDto = buildError(accessDeniedException, HttpStatus.FORBIDDEN);
-        return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
+        return getError(accessDeniedException, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorDto> handleBadCredentialsException(BadCredentialsException badCredentialsException){
+        return getError(badCredentialsException, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception exception){
-        var errorDto = buildError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
-        return  ResponseEntity.status(errorDto.getStatus().value()).body(errorDto);
+        return getError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ErrorDto buildError(Exception exception, HttpStatus status){
-        return ErrorDto.builder()
-                .message(exception.getMessage())
+    private ResponseEntity<ErrorDto> getError(Exception exception, HttpStatus status){
+       return buildError(exception.getMessage(), status);
+    }
+
+    private ResponseEntity<ErrorDto> buildError(String message, HttpStatus status){
+        var error = ErrorDto.builder()
+                .message(message)
                 .status(status)
                 .build();
+        return  ResponseEntity.status(error.getStatus().value()).body(error);
     }
 }

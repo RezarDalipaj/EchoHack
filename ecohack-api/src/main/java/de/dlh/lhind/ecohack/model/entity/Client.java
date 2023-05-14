@@ -63,6 +63,6 @@ public class Client {
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
-    private List<Tag> preferedTags;
+    private List<Tag> preferredTags;
 
 }

@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -54,6 +55,7 @@ public class MealService implements IMealService {
 
 
     @Override
+    @Transactional
     public void uploadImage(MultipartFile image, Long mealId) throws IOException {
 
         byte[] imageData = image.getBytes();
@@ -76,6 +78,7 @@ public class MealService implements IMealService {
     }
 
     @Override
+    @Transactional
     public MealDto save(MealDto mealDto, String username) {
         var provider = providerService.findByEmail(username);
         Meal meal = new Meal();
@@ -115,6 +118,7 @@ public class MealService implements IMealService {
     }
 
     @Override
+    @Transactional
     public MealDto updateImage(String image, Long mealId) {
         Optional<Meal> mealOptional = mealRepository.findById(mealId);
         if (mealOptional.isPresent()){

@@ -3,14 +3,14 @@ package de.dlh.lhind.ecohack.util;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TokenUtil {
     private final TokenProvider tokenProvider;
     public String usernameFromToken(HttpServletRequest request) throws UnAuthorizedException {

@@ -13,6 +13,7 @@ import de.dlh.lhind.ecohack.service.IMealService;
 import de.dlh.lhind.ecohack.service.IOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class OrderService implements IOrderService {
     private final IMealService mealService;
     private final OrderRepository orderRepository;
     @Override
+    @Transactional
     public void save(OrderDto orderDto, String username) throws BadRequestException {
         var client = clientService.findClientByUsername(username);
         var order = new Order();

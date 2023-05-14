@@ -14,6 +14,7 @@ import de.dlh.lhind.ecohack.service.IProviderService;
 import de.dlh.lhind.ecohack.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class ProviderService implements IProviderService {
     private final IUserService userService;
 
     @Override
+    @Transactional
     public TokenDto saveProvider(ProviderDto providerDto) throws BadRequestException, UnAuthorizedException {
         validateProvider(providerDto);
         var provider = providerMapper.toProvider(providerDto);
