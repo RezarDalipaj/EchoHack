@@ -13,7 +13,6 @@ spring:
     password: ecoPassword
 
 app:
-  salt: fouwrhvn
   jwt:
     # Signing key for HS512 algorithm
     # In http://www.allkeysgenerator.com/ you can generate all kinds of keys
