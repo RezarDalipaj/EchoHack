@@ -96,9 +96,9 @@ public class TokenProvider {
     public void saveToken(String username, String token) {
         var user = userService.findUserByEmail(username);
         var tokenEntity = Token.builder()
-        .user(user)
-        .value(token)
-        .build();
+                .user(user)
+                .value(token)
+                .build();
         tokenRepository.save(tokenEntity);
     }
 
