@@ -20,8 +20,6 @@ public class JwtUserDetailsService implements IJwtUserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var user = userService.findUserByEmail(username);
-        if (user == null)
-            throw new UsernameNotFoundException("User not found with username: " + username);
 
         Collection<SimpleGrantedAuthority> authorityCollection = new ArrayList<>();
         authorityCollection.add(new SimpleGrantedAuthority(user.getRole().name()));

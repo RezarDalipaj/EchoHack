@@ -5,6 +5,7 @@ import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.UserRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
+import de.dlh.lhind.ecohack.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,8 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public User save(User user, Role role){
-        user.setPassword(bcryptEncoder.encode(user.getPassword()));
+        var saltedPassword = PasswordUtil.getSaltedPassword(user.getPassword());
+        user.setPassword(bcryptEncoder.encode(saltedPassword));
         user.setRole(role);
         return userRepository.save(user);
     }

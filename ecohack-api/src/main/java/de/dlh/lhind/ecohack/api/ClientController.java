@@ -6,8 +6,8 @@ import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.QuizResponse;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
+import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IClientService;
-import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientController {
 
     private final IClientService clientService;
-    private final TokenUtil tokenUtil;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/auth/client/signup")
     public ResponseEntity<TokenDto> saveClient(@Valid @RequestBody ClientDto clientDto) throws BadRequestException, UnAuthorizedException {
@@ -34,6 +34,6 @@ public class ClientController {
     @PreAuthorize("hasAuthority('CLIENT')")
     @PostMapping("/take/quiz")
     public ResponseEntity<QuizResponse> takeQuiz(@Valid @RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) throws UnAuthorizedException, BadRequestException {
-        return ResponseEntity.ok(clientService.takeQuiz(questionnaireDto, tokenUtil.usernameFromToken(request)));
+        return ResponseEntity.ok(clientService.takeQuiz(questionnaireDto, tokenProvider.getUsernameFromRequest(request)));
     }
 }

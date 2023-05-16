@@ -2,8 +2,8 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
+import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IMealService;
-import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MealController {
     private final IMealService mealService;
-    private final TokenUtil tokenUtil;
+    private final TokenProvider tokenProvider;
 
     @GetMapping()
     public ResponseEntity<List<MealDto>> findAllByClientId(@RequestParam String username, @RequestParam int pageSize, @RequestParam int pageNumber) {
@@ -42,14 +42,14 @@ public class MealController {
     @PreAuthorize("hasAuthority('PROVIDER')")
     @PostMapping()
     public ResponseEntity<MealDto> save(@Valid @RequestBody MealDto meal, HttpServletRequest request) throws UnAuthorizedException {
-        return ResponseEntity.ok(mealService.save(meal, tokenUtil.usernameFromToken(request)));
+        return ResponseEntity.ok(mealService.save(meal, tokenProvider.getUsernameFromRequest(request)));
     }
 
     @GetMapping("/provider")
     @PreAuthorize("hasAuthority('PROVIDER')")
     public ResponseEntity<List<MealDto>> findAllByProviderId(@RequestParam int pageSize, @RequestParam int pageNumber
             , HttpServletRequest request) throws UnAuthorizedException {
-        return ResponseEntity.ok(mealService.findAllByProviderUsername(tokenUtil.usernameFromToken
+        return ResponseEntity.ok(mealService.findAllByProviderUsername(tokenProvider.getUsernameFromRequest
                 (request), pageSize, pageNumber));
     }
 

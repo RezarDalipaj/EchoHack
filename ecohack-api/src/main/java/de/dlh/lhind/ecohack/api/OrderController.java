@@ -3,8 +3,8 @@ package de.dlh.lhind.ecohack.api;
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
+import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IOrderService;
-import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final IOrderService orderService;
-    private final TokenUtil tokenUtil;
+    private final TokenProvider tokenProvider;
 
     @PreAuthorize("hasAuthority('CLIENT')")
     @PostMapping
     public void saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException, UnAuthorizedException {
-        orderService.save(orderDto, tokenUtil.usernameFromToken(request));
+        orderService.save(orderDto, tokenProvider.getUsernameFromRequest(request));
     }
 }

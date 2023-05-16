@@ -16,6 +16,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -147,6 +149,23 @@ public class TokenProvider {
     public  <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
         var claims = getClaimsFromAccessToken(token);
         return claims.getBody().get(claimType, claimClass);
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request){
+        return getJwtFromRequest(request).orElseThrow();
+    }
+
+    public Optional<String> getJwtFromRequest(HttpServletRequest request) {
+        String tokenHeader = request.getHeader(Constants.Token.TOKEN_HEADER);
+        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(Constants.Token.TOKEN_PREFIX)) {
+            return Optional.of(tokenHeader.replace(Constants.Token.TOKEN_PREFIX, ""));
+        }
+        return Optional.empty();
+    }
+
+    public String getUsernameFromRequest(HttpServletRequest request) throws UnAuthorizedException {
+        var token = getTokenFromRequest(request);
+        return getUsernameFromAccessToken(token);
     }
 
     public String getUsernameFromAccessToken(String token) throws UnAuthorizedException {

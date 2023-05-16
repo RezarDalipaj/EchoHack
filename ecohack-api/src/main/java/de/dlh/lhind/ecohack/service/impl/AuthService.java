@@ -6,6 +6,7 @@ import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IAuthService;
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
+import de.dlh.lhind.ecohack.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,8 +44,9 @@ public class AuthService implements IAuthService {
     }
 
     private String authenticateAndGetAccessToken(LoginDto loginDto) throws UnAuthorizedException {
+        var saltedPassword = PasswordUtil.getSaltedPassword(loginDto.getPassword());
         var authentication = authenticationManager.authenticate
-        (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+        (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), saltedPassword));
         return tokenProvider.generateAccessToken(authentication);
     }
 }

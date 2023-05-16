@@ -2,9 +2,9 @@ package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
+import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.ILogoutService;
 import de.dlh.lhind.ecohack.util.Constants;
-import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +19,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class LogoutService implements ILogoutService {
 
     private final TokenRepository tokenRepository;
-    private final TokenUtil tokenUtil;
+    private final TokenProvider tokenProvider;
 
     @Override
     @Transactional
     public void logout(HttpServletRequest request
             , HttpServletResponse response, Authentication authentication) {
-        var token = tokenUtil.getTokenFromRequest(request);
+        var token = tokenProvider.getTokenFromRequest(request);
         // validating if request has an access token
         try {
-            tokenUtil.usernameFromToken(request);
+            tokenProvider.getUsernameFromRequest(request);
         } catch (UnAuthorizedException ignored){
             log.error(Constants.UNAUTHORIZED_MESSAGE);
             return;
