@@ -4,7 +4,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class PasswordUtil {
 
-    private final String salt = Constants.salt;
+    private final String salt = Constants.SALT;
     private final Integer halfSaltLength = salt.length()/2;
 
     public static String getSaltedPassword(String password){

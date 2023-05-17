@@ -21,7 +21,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,19 +74,11 @@ public class TokenProvider {
                 .setIssuer(Constants.Token.TOKEN_ISSUER)
                 .setAudience(Constants.Token.TOKEN_AUDIENCE)
                 .setSubject(user.getUsername())
-                .claim("role", getRoleFromUser(user))
+                .claim("role", TokenUtil.getRoleFromUser(user))
                 .claim("preferred_username", user.getUsername())
                 .compact();
         saveToken(user.getUsername(), token);
         return token;
-    }
-
-    private String getRoleFromUser(UserDetails userDetails) throws UnAuthorizedException {
-        return userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElseThrow(UnAuthorizedException::new);
     }
 
     private Integer getMinutesFromBoolean (Boolean isAccess) {
@@ -131,8 +122,7 @@ public class TokenProvider {
     }
 
     private boolean tokenDoesNotExist(String token){
-        var entity = tokenRepository.findByValue(token);
-        return entity.isEmpty();
+        return !tokenRepository.existsByValue(token);
     }
 
     private byte[] getKeyFromBoolean(Boolean isAccess){
