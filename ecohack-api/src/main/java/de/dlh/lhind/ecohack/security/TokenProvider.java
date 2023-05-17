@@ -7,6 +7,7 @@ import de.dlh.lhind.ecohack.model.entity.Token;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.service.IUserService;
 import de.dlh.lhind.ecohack.util.Constants;
+import de.dlh.lhind.ecohack.util.TokenUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
@@ -24,7 +25,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -47,20 +47,24 @@ public class TokenProvider {
         this.jwtProperties = jwtProperties;
     }
 
+    @Transactional
     public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
         UserDetails user = (UserDetails) authentication.getPrincipal();
 
         return buildAndSaveAccessToken(user);
     }
 
+    @Transactional
     public String buildAndSaveAccessToken(UserDetails user) throws UnAuthorizedException {
         return buildAndSaveToken(user, true);
     }
+    @Transactional
     public String buildAndSaveRefreshToken(UserDetails user) throws UnAuthorizedException {
         return buildAndSaveToken(user, false);
     }
 
-    private String buildAndSaveToken(UserDetails user, Boolean isAccess) throws UnAuthorizedException {
+    @Transactional
+    public String buildAndSaveToken(UserDetails user, Boolean isAccess) throws UnAuthorizedException {
         var signingKey = getKeyFromBoolean(isAccess);
         var token = Jwts.builder()
                 .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
@@ -152,20 +156,8 @@ public class TokenProvider {
         return claims.getBody().get(claimType, claimClass);
     }
 
-    public String getTokenFromRequest(HttpServletRequest request){
-        return getJwtFromRequest(request).orElseThrow();
-    }
-
-    public Optional<String> getJwtFromRequest(HttpServletRequest request) {
-        String tokenHeader = request.getHeader(Constants.Token.TOKEN_HEADER);
-        if (StringUtils.hasText(tokenHeader) && tokenHeader.startsWith(Constants.Token.TOKEN_PREFIX)) {
-            return Optional.of(tokenHeader.replace(Constants.Token.TOKEN_PREFIX, ""));
-        }
-        return Optional.empty();
-    }
-
     public String getUsernameFromRequest(HttpServletRequest request) throws UnAuthorizedException {
-        var token = getTokenFromRequest(request);
+        var token = TokenUtil.getTokenFromRequest(request);
         return getUsernameFromAccessToken(token);
     }
 

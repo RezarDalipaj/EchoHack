@@ -2,6 +2,7 @@ package de.dlh.lhind.ecohack.security;
 
 import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
 import de.dlh.lhind.ecohack.util.Constants;
+import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +28,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-            tokenProvider.getJwtFromRequest(request)
+            TokenUtil.getJwtFromRequest(request)
                     .flatMap(token -> tokenProvider.validateTokenAndGetJws(token,isNotRefreshEndpoint(request)))
                     .ifPresent(jws -> {
                         var username = jws.getBody().getSubject();

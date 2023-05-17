@@ -5,6 +5,7 @@ import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.ILogoutService;
 import de.dlh.lhind.ecohack.util.Constants;
+import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class LogoutService implements ILogoutService {
     @Transactional
     public void logout(HttpServletRequest request
             , HttpServletResponse response, Authentication authentication) {
-        var token = tokenProvider.getTokenFromRequest(request);
+        var token = TokenUtil.getTokenFromRequest(request);
         // validating if request has an access token
         try {
             tokenProvider.getUsernameFromRequest(request);

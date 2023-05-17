@@ -101,13 +101,11 @@ public class MealService implements IMealService {
         List<Nutrition> nutritions = new ArrayList<>();
         if (isNotEmpty(mealDto.getNutritions())) {
             for (NutritionDto nutritionDto : mealDto.getNutritions()) {
-                if (nutritionDto.getName() != null && nutritionDto.getAmount() != null) {
-                    Nutrition nutrition = new Nutrition();
-                    nutrition.setName(nutritionDto.getName());
-                    nutrition.setMeal(meal);
-                    nutrition.setAmount(nutritionDto.getAmount());
-                    nutritions.add(nutrition);
-                }
+                Nutrition nutrition = new Nutrition();
+                nutrition.setName(nutritionDto.getName());
+                nutrition.setMeal(meal);
+                nutrition.setAmount(nutritionDto.getAmount());
+                nutritions.add(nutrition);
             }
         }
 

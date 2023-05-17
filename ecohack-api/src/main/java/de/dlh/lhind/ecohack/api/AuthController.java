@@ -3,9 +3,9 @@ package de.dlh.lhind.ecohack.api;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
-import de.dlh.lhind.ecohack.security.TokenProvider;
 import de.dlh.lhind.ecohack.service.IAuthService;
 import de.dlh.lhind.ecohack.util.Constants;
+import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final IAuthService authService;
-    private final TokenProvider tokenProvider;
 
     @PostMapping("/auth/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) throws UnAuthorizedException {
@@ -30,6 +29,6 @@ public class AuthController {
 
     @GetMapping(Constants.REFRESH_PATH)
     public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) throws UnAuthorizedException {
-        return ResponseEntity.ok(authService.refreshToken(tokenProvider.getTokenFromRequest(request)));
+        return ResponseEntity.ok(authService.refreshToken(TokenUtil.getTokenFromRequest(request)));
     }
 }
