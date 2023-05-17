@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/meal")
 @RequiredArgsConstructor
 public class MealController {
+
     private final IMealService mealService;
     private final TokenProvider tokenProvider;
 

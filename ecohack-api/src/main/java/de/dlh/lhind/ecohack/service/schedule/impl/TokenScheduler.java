@@ -31,7 +31,7 @@ public class TokenScheduler implements ITokenScheduler {
                 // if it's a valid refresh token don't do anything
                 try {
                     tokenProvider.getUsernameFromRefreshToken(token.getValue());
-                } catch (UnAuthorizedException e) {
+                } catch (UnAuthorizedException exception) {
                     // else delete the token
                     tokenRepository.delete(token);
                     log.warn("Deleted token with id {} from db", token.getId());

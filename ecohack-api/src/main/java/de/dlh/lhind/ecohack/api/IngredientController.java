@@ -13,8 +13,8 @@ import java.util.List;
 @RequestMapping("/ingredient")
 @RequiredArgsConstructor
 public class IngredientController {
-    private final IIngredientService ingredientService;
 
+    private final IIngredientService ingredientService;
 
     @GetMapping()
     public ResponseEntity<List<IngredientDto>> findAll(){

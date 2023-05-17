@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 @RequiredArgsConstructor
 public class AuthController {
+
     private final IAuthService authService;
 
     @PostMapping("/auth/login")

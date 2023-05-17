@@ -9,6 +9,7 @@ public final class Constants {
     public static final String UNAUTHORIZED_MESSAGE = "Unauthorized!";
     public static final String REFRESH_PATH = "/refresh/token";
     public static final String SALT = "fouwrhvn";
+    public static final String ERROR_MESSAGE = "An error occurred";
 
     @UtilityClass
     public static final class Token {
