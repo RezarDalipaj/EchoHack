@@ -1,4 +1,4 @@
-package de.dlh.lhind.ecohack.service;
+package de.dlh.lhind.ecohack.service.security;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 

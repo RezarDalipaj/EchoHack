@@ -1,6 +1,6 @@
-package de.dlh.lhind.ecohack.service.impl;
+package de.dlh.lhind.ecohack.service.security.impl;
 
-import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
+import de.dlh.lhind.ecohack.service.security.IJwtUserDetailsService;
 import de.dlh.lhind.ecohack.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

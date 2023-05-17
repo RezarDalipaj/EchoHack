@@ -3,9 +3,10 @@ package de.dlh.lhind.ecohack.security;
 import de.dlh.lhind.ecohack.config.JwtProperties;
 import de.dlh.lhind.ecohack.config.JwtSecret;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
+import de.dlh.lhind.ecohack.mapper.UserMapper;
+import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.Token;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
-import de.dlh.lhind.ecohack.service.IUserService;
 import de.dlh.lhind.ecohack.util.Constants;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import io.jsonwebtoken.Claims;
@@ -18,8 +19,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -32,38 +33,32 @@ import java.util.UUID;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class TokenProvider {
 
     private final TokenRepository tokenRepository;
-    private final IUserService userService;
+    private final UserMapper userMapper;
     private final JwtSecret jwtSecret;
     private final JwtProperties jwtProperties;
 
-    public TokenProvider(TokenRepository tokenRepository, @Lazy IUserService userService, JwtSecret jwtSecret, JwtProperties jwtProperties) {
-        this.tokenRepository = tokenRepository;
-        this.userService = userService;
-        this.jwtSecret = jwtSecret;
-        this.jwtProperties = jwtProperties;
+    @Transactional
+    public String generateAccessToken(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        var userDto = userMapper.userDetailsToUserDto(userDetails);
+        return buildAndSaveAccessToken(userDto);
     }
 
     @Transactional
-    public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-
-        return buildAndSaveAccessToken(user);
-    }
-
-    @Transactional
-    public String buildAndSaveAccessToken(UserDetails user) throws UnAuthorizedException {
+    public String buildAndSaveAccessToken(UserDto user) {
         return buildAndSaveToken(user, true);
     }
     @Transactional
-    public String buildAndSaveRefreshToken(UserDetails user) throws UnAuthorizedException {
+    public String buildAndSaveRefreshToken(UserDto user) {
         return buildAndSaveToken(user, false);
     }
 
     @Transactional
-    public String buildAndSaveToken(UserDetails user, Boolean isAccess) throws UnAuthorizedException {
+    public String buildAndSaveToken(UserDto userDto, Boolean isAccess) {
         var signingKey = getKeyFromBoolean(isAccess);
         var token = Jwts.builder()
                 .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
@@ -73,11 +68,11 @@ public class TokenProvider {
                 .setId(UUID.randomUUID().toString())
                 .setIssuer(Constants.Token.TOKEN_ISSUER)
                 .setAudience(Constants.Token.TOKEN_AUDIENCE)
-                .setSubject(user.getUsername())
-                .claim("role", TokenUtil.getRoleFromUser(user))
-                .claim("preferred_username", user.getUsername())
+                .setSubject(userDto.getUsername())
+                .claim("role", userDto.getRole())
+                .claim("preferred_username", userDto.getUsername())
                 .compact();
-        saveToken(user.getUsername(), token);
+        saveToken(token);
         return token;
     }
 
@@ -88,10 +83,8 @@ public class TokenProvider {
     }
 
     @Transactional
-    public void saveToken(String username, String token) {
-        var user = userService.findUserByEmail(username);
+    public void saveToken(String token) {
         var tokenEntity = Token.builder()
-                .user(user)
                 .value(token)
                 .build();
         tokenRepository.save(tokenEntity);

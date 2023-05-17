@@ -1,32 +1,44 @@
 package de.dlh.lhind.ecohack.mapper;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
-import org.springframework.stereotype.Component;
+import lombok.experimental.UtilityClass;
+import org.springframework.security.core.GrantedAuthority;
 
-@Component
+import java.util.Collection;
+
+@UtilityClass
 public final class MappingHelper {
 
-    String mapRoleToString(Role role){
+    public static String mapRoleToString(Role role){
         return role == null ? null : role.toString();
     }
-    String paymentMethodToString(PaymentMethod paymentMethod){
+    public static String paymentMethodToString(PaymentMethod paymentMethod){
         return paymentMethod == null ? null : paymentMethod.toString();
     }
 
-    Role mapStringToRole(String role){
+    public static Role mapStringToRole(String role){
         for (var roleEnum : Role.values()) {
             if (roleEnum.toString().equals(role))
                 return roleEnum;
         }
-        return null;
+        return Role.CLIENT;
     }
 
-    PaymentMethod mapStringToPaymentMethod(String paymentMethod){
+    public static PaymentMethod mapStringToPaymentMethod(String paymentMethod){
         for (var payment : PaymentMethod.values()) {
             if (payment.toString().equals(paymentMethod))
                 return payment;
         }
         return PaymentMethod.CASH;
+    }
+
+    public static String getRoleFromUserDetails(Collection<? extends GrantedAuthority> authorities)
+            throws UnAuthorizedException {
+        return authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElseThrow(UnAuthorizedException::new);
     }
 }

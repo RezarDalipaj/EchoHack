@@ -1,6 +1,8 @@
 package de.dlh.lhind.ecohack.service.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
+import de.dlh.lhind.ecohack.mapper.UserMapper;
+import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.UserRepository;
@@ -14,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class UserService implements IUserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder bcryptEncoder;
+    private final UserMapper userMapper;
 
     @Override
     public User findUserByEmail(String email) {
@@ -38,6 +42,12 @@ public class UserService implements IUserService {
     public void validateUsername(String username) throws BadRequestException {
         if (userRepository.existsByEmail(username))
             throw new BadRequestException("Username already exists");
+    }
+
+    @Override
+    public UserDto getUserByUsername(String username){
+        var user = findUserByEmail(username);
+        return userMapper.userToUserDto(user);
     }
 
 }

@@ -1,6 +1,6 @@
 package de.dlh.lhind.ecohack.security;
 
-import de.dlh.lhind.ecohack.service.IJwtUserDetailsService;
+import de.dlh.lhind.ecohack.service.security.IJwtUserDetailsService;
 import de.dlh.lhind.ecohack.util.Constants;
 import de.dlh.lhind.ecohack.util.TokenUtil;
 import jakarta.servlet.FilterChain;

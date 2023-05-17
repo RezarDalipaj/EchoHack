@@ -42,7 +42,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception exception){
-        return getError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+        return getError(exception, getStatusOfException(exception));
+    }
+
+    private HttpStatus getStatusOfException(Exception exception){
+        var cause = exception.getCause();
+        if (cause instanceof NullPointerException)
+            return HttpStatus.NOT_FOUND;
+        if (cause instanceof UnAuthorizedException)
+            return HttpStatus.UNAUTHORIZED;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     private ResponseEntity<ErrorDto> getError(Exception exception, HttpStatus status){
