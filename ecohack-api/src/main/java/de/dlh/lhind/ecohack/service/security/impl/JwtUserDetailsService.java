@@ -15,14 +15,15 @@ import java.util.Collection;
 @Service
 @RequiredArgsConstructor
 public class JwtUserDetailsService implements IJwtUserDetailsService {
+
     private final IUserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userService.findUserByEmail(username);
+        var user = userService.getUserByUsername(username);
 
         Collection<SimpleGrantedAuthority> authorityCollection = new ArrayList<>();
-        authorityCollection.add(new SimpleGrantedAuthority(user.getRole().name()));
-        return new User(user.getEmail(), user.getPassword(), authorityCollection);
+        authorityCollection.add(new SimpleGrantedAuthority(user.getRole()));
+        return new User(user.getUsername(), user.getPassword(), authorityCollection);
     }
 }

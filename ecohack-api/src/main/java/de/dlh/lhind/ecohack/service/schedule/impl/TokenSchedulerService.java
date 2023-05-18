@@ -3,7 +3,7 @@ package de.dlh.lhind.ecohack.service.schedule.impl;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.security.token.TokenProvider;
-import de.dlh.lhind.ecohack.service.schedule.ITokenScheduler;
+import de.dlh.lhind.ecohack.service.schedule.ITokenSchedulerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TokenScheduler implements ITokenScheduler {
+public class TokenSchedulerService implements ITokenSchedulerService {
 
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;

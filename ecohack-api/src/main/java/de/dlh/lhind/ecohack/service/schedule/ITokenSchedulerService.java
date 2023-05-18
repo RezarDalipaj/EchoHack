@@ -1,5 +1,5 @@
 package de.dlh.lhind.ecohack.service.schedule;
 
-public interface ITokenScheduler {
+public interface ITokenSchedulerService {
     void deleteExpiredTokens();
 }

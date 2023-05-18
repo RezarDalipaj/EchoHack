@@ -70,7 +70,6 @@ public class TokenProvider {
                 .setAudience(Constants.Token.TOKEN_AUDIENCE)
                 .setSubject(userDto.getUsername())
                 .claim("role", userDto.getRole())
-                .claim("preferred_username", userDto.getUsername())
                 .compact();
         saveToken(token);
         return token;

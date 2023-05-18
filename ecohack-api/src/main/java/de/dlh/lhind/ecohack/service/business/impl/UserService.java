@@ -21,8 +21,7 @@ public class UserService implements IUserService {
     private final PasswordEncoder bcryptEncoder;
     private final UserMapper userMapper;
 
-    @Override
-    public User findUserByEmail(String email) {
+    private User findUserByEmail(String email) {
         var entity = userRepository.findByEmail(email);
         if (entity == null)
             throw new NullPointerException("User with email " + email + " does not exist");

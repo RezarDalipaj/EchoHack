@@ -6,7 +6,6 @@ import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 
 public interface IUserService {
-    User findUserByEmail(String email);
     User save(User user, Role role);
     void validateUsername(String username) throws BadRequestException;
 
