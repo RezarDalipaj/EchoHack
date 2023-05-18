@@ -31,7 +31,7 @@ public class LogoutService implements ILogoutService {
         var token = TokenUtil.getTokenFromRequest(request);
         // validating if request has an access token
         try {
-            tokenProvider.getUsernameFromRequest(request);
+            tokenProvider.getUsernameFromAccessToken(token);
         } catch (UnAuthorizedException unAuthorizedException){
             log.error(Constants.UNAUTHORIZED_MESSAGE);
             isLoggedOut = false;
@@ -49,6 +49,6 @@ public class LogoutService implements ILogoutService {
             return LogoutDto.builder()
                 .logoutMessage(Constants.LOGOUT_SUCCESS)
                 .build();
-        throw new UnAuthorizedException("Could not logout! Invalid token");
+        throw new UnAuthorizedException("Could not logout! Invalid token!");
     }
 }

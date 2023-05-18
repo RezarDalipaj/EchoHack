@@ -42,7 +42,7 @@ public class TokenProvider {
     private final JwtProperties jwtProperties;
 
     @Transactional
-    public String generateAccessToken(Authentication authentication) {
+    public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         var userDto = userMapper.userDetailsToUserDto(userDetails);
         return buildAndSaveAccessToken(userDto);

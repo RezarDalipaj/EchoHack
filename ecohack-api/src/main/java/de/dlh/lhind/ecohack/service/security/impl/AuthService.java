@@ -21,7 +21,7 @@ public class AuthService implements IAuthService {
     private final TokenProvider tokenProvider;
 
     @Override
-    public TokenDto login(LoginDto loginDto) {
+    public TokenDto login(LoginDto loginDto) throws UnAuthorizedException {
         String accessToken = authenticateAndGetAccessToken(loginDto);
         var user = userService.getUserByUsername(loginDto.getUsername());
         String refreshToken = tokenProvider.buildAndSaveRefreshToken(user);
@@ -43,7 +43,7 @@ public class AuthService implements IAuthService {
                 .build();
     }
 
-    private String authenticateAndGetAccessToken(LoginDto loginDto) {
+    private String authenticateAndGetAccessToken(LoginDto loginDto) throws UnAuthorizedException {
         var saltedPassword = PasswordUtil.getSaltedPassword(loginDto.getPassword());
         var authentication = authenticationManager.authenticate
         (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), saltedPassword));
