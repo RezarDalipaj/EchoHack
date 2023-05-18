@@ -4,7 +4,6 @@ import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.mapper.UserMapper;
 import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.User;
-import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.UserRepository;
 import de.dlh.lhind.ecohack.service.business.IUserService;
 import de.dlh.lhind.ecohack.util.security.PasswordUtil;
@@ -30,10 +29,10 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public User save(User user, Role role){
-        var saltedPassword = PasswordUtil.getSaltedPassword(user.getPassword());
+    public User saveUser(UserDto userDto){
+        var user = userMapper.userDtoToEntity(userDto);
+        var saltedPassword = PasswordUtil.getSaltedPassword(userDto.getPassword());
         user.setPassword(bcryptEncoder.encode(saltedPassword));
-        user.setRole(role);
         return userRepository.save(user);
     }
 
@@ -46,6 +45,11 @@ public class UserService implements IUserService {
     @Override
     public UserDto getUserByUsername(String username){
         var user = findUserByEmail(username);
+        return userMapper.userToUserDto(user);
+    }
+
+    @Override
+    public UserDto mapEntityToDto(User user) {
         return userMapper.userToUserDto(user);
     }
 

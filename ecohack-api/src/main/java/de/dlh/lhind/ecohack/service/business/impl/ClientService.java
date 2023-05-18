@@ -7,11 +7,9 @@ import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.QuizDto;
 import de.dlh.lhind.ecohack.model.dto.response.QuizResponse;
 import de.dlh.lhind.ecohack.model.dto.request.ResultDto;
-import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.Client;
-import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
 import de.dlh.lhind.ecohack.service.security.IAuthService;
 import de.dlh.lhind.ecohack.service.business.IClientService;
@@ -63,15 +61,12 @@ public class ClientService implements IClientService {
     @Override
     @Transactional
     public TokenDto save(ClientDto clientDto) throws BadRequestException, UnAuthorizedException {
-        validateRegister(clientDto);
+        validateClientRegister(clientDto);
         var client = clientMapper.dtoToClient(clientDto);
-        var user = client.getUser();
-        client.setUser(userService.save(user, Role.CLIENT));
+        var userDto = userService.mapEntityToDto(client.getUser());
+        client.setUser(userService.saveUser(userDto));
         clientRepository.save(client);
-        var login = new LoginDto();
-        login.setUsername(clientDto.getUsername());
-        login.setPassword(clientDto.getPassword());
-        return authService.login(login);
+        return authService.login(clientDto);
     }
     @Override
     public Integer getPoints(String username) {
@@ -109,7 +104,7 @@ public class ClientService implements IClientService {
         return client.get();
     }
 
-    private void validateRegister(ClientDto clientDto) throws BadRequestException {
+    private void validateClientRegister(ClientDto clientDto) throws BadRequestException {
         userService.validateUsername(clientDto.getUsername());
     }
 

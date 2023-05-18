@@ -4,7 +4,6 @@ import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ProviderMapper;
 import de.dlh.lhind.ecohack.model.dto.ProviderDto;
-import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.FoodProvider;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
@@ -28,15 +27,13 @@ public class ProviderService implements IProviderService {
     @Override
     @Transactional
     public TokenDto saveProvider(ProviderDto providerDto) throws BadRequestException, UnAuthorizedException {
-        validateProvider(providerDto);
+        validateProviderRegister(providerDto);
         var provider = providerMapper.toProvider(providerDto);
-        var user = provider.getUser();
-        provider.setUser(userService.save(user, Role.PROVIDER));
+        var userDto = userService.mapEntityToDto(provider.getUser());
+        userDto.setRole(Role.PROVIDER.name());
+        provider.setUser(userService.saveUser(userDto));
         providerRepository.save(provider);
-        var login = new LoginDto();
-        login.setUsername(providerDto.getUsername());
-        login.setPassword(providerDto.getPassword());
-        return authService.login(login);
+        return authService.login(providerDto);
     }
 
     @Override
@@ -47,7 +44,7 @@ public class ProviderService implements IProviderService {
         return provider;
     }
 
-    private void validateProvider(ProviderDto providerDto) throws BadRequestException {
+    private void validateProviderRegister(ProviderDto providerDto) throws BadRequestException {
         userService.validateUsername(providerDto.getUsername());
         validateName(providerDto.getName());
         validateNipt(providerDto.getNipt());
