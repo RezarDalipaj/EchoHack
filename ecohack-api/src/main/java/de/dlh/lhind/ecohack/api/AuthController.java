@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     @GetMapping("/success/logout")
-    public ResponseEntity<LogoutDto> logoutSuccess(HttpServletRequest request) throws UnAuthorizedException {
-        return ResponseEntity.ok(logoutService.successLogout(TokenUtil.getTokenFromRequest(request)));
+    public ResponseEntity<LogoutDto> logoutSuccess() throws UnAuthorizedException {
+        return ResponseEntity.ok(logoutService.successLogout());
     }
 }

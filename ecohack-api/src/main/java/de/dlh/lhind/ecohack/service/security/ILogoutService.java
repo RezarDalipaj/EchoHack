@@ -9,5 +9,5 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 public interface ILogoutService extends LogoutHandler {
     void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication);
-    LogoutDto successLogout(String token) throws UnAuthorizedException;
+    LogoutDto successLogout() throws UnAuthorizedException;
 }
