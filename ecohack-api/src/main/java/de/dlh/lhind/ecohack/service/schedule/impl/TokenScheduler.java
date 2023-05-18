@@ -2,7 +2,7 @@ package de.dlh.lhind.ecohack.service.schedule.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
-import de.dlh.lhind.ecohack.security.TokenProvider;
+import de.dlh.lhind.ecohack.security.token.TokenProvider;
 import de.dlh.lhind.ecohack.service.schedule.ITokenScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

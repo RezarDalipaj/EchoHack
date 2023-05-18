@@ -1,7 +1,7 @@
 package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
-import de.dlh.lhind.ecohack.service.IIngredientService;
+import de.dlh.lhind.ecohack.service.business.IIngredientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

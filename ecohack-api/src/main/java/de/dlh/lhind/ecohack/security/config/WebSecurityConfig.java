@@ -1,7 +1,7 @@
 package de.dlh.lhind.ecohack.security.config;
 
-import de.dlh.lhind.ecohack.security.TokenAuthenticationFilter;
-import de.dlh.lhind.ecohack.service.ILogoutService;
+import de.dlh.lhind.ecohack.security.filter.TokenAuthenticationFilter;
+import de.dlh.lhind.ecohack.service.security.ILogoutService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

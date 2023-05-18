@@ -3,7 +3,7 @@ package de.dlh.lhind.ecohack.exception.handler;
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.response.ErrorDto;
-import de.dlh.lhind.ecohack.util.Constants;
+import de.dlh.lhind.ecohack.util.constants.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;

@@ -2,6 +2,7 @@ package de.dlh.lhind.ecohack.mapper;
 
 import de.dlh.lhind.ecohack.model.dto.ProviderDto;
 import de.dlh.lhind.ecohack.model.entity.FoodProvider;
+import de.dlh.lhind.ecohack.util.mapper.MappingUtil;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +11,7 @@ import org.mapstruct.NullValueMappingStrategy;
 @Mapper(componentModel = "spring",
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
-        uses = MappingHelper.class)
+        uses = MappingUtil.class)
 public interface ProviderMapper {
 
     @Mapping(source = "user.email", target = "username")

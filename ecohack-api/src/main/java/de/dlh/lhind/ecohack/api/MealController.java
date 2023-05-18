@@ -2,8 +2,8 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
-import de.dlh.lhind.ecohack.security.TokenProvider;
-import de.dlh.lhind.ecohack.service.IMealService;
+import de.dlh.lhind.ecohack.security.token.TokenProvider;
+import de.dlh.lhind.ecohack.service.business.IMealService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
