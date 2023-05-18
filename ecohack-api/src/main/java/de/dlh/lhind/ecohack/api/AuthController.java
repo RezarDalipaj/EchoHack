@@ -2,8 +2,10 @@ package de.dlh.lhind.ecohack.api;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
+import de.dlh.lhind.ecohack.model.dto.response.LogoutDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.service.security.IAuthService;
+import de.dlh.lhind.ecohack.service.security.ILogoutService;
 import de.dlh.lhind.ecohack.util.constants.Constants;
 import de.dlh.lhind.ecohack.util.security.TokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final IAuthService authService;
+    private final ILogoutService logoutService;
 
     @PostMapping("/auth/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) throws UnAuthorizedException {
@@ -31,5 +34,10 @@ public class AuthController {
     @GetMapping(Constants.REFRESH_PATH)
     public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request) throws UnAuthorizedException {
         return ResponseEntity.ok(authService.refreshToken(TokenUtil.getTokenFromRequest(request)));
+    }
+
+    @GetMapping("/success/logout")
+    public ResponseEntity<LogoutDto> logoutSuccess(HttpServletRequest request) throws UnAuthorizedException {
+        return ResponseEntity.ok(logoutService.successLogout(TokenUtil.getTokenFromRequest(request)));
     }
 }

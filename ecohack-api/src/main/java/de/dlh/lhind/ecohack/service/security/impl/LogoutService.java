@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.service.security.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
+import de.dlh.lhind.ecohack.model.dto.response.LogoutDto;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.security.token.TokenProvider;
 import de.dlh.lhind.ecohack.service.security.ILogoutService;
@@ -21,6 +22,7 @@ public class LogoutService implements ILogoutService {
 
     private final TokenRepository tokenRepository;
     private final TokenProvider tokenProvider;
+    private boolean isLoggedOut = false;
 
     @Override
     @Transactional
@@ -30,12 +32,22 @@ public class LogoutService implements ILogoutService {
         // validating if request has an access token
         try {
             tokenProvider.getUsernameFromRequest(request);
-        } catch (UnAuthorizedException ignored){
+        } catch (UnAuthorizedException unAuthorizedException){
             log.error(Constants.UNAUTHORIZED_MESSAGE);
             return;
         }
         var storedToken = tokenRepository.findByValue(token).orElseThrow();
         tokenRepository.deleteById(storedToken.getId() + 1);
         tokenRepository.delete(storedToken);
+        isLoggedOut = true;
+    }
+
+    @Override
+    public LogoutDto successLogout(String token) throws UnAuthorizedException {
+        if (isLoggedOut)
+            return LogoutDto.builder()
+                .logoutMessage(Constants.LOGOUT_SUCCESS)
+                .build();
+        throw new UnAuthorizedException();
     }
 }

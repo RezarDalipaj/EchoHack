@@ -45,6 +45,18 @@ public class GlobalExceptionHandler {
         return getError(exception, getStatusOfException(exception));
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorDto> handleRuntimeException(RuntimeException exception){
+        return getRuntimeError(exception);
+    }
+
+    private ResponseEntity<ErrorDto> getRuntimeError(RuntimeException exception){
+        var isUnauthorized = exception.getMessage().contains(Constants.UNAUTHORIZED_MESSAGE);
+        if (isUnauthorized)
+            return getError(new UnAuthorizedException(), HttpStatus.UNAUTHORIZED);
+        return getError(exception, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private HttpStatus getStatusOfException(Exception exception){
         var cause = exception.getCause();
         if (cause instanceof NullPointerException)

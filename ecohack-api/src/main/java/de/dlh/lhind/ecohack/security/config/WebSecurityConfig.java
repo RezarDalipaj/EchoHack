@@ -32,7 +32,9 @@ public class WebSecurityConfig {
 		http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		http.logout()
 				.logoutUrl("/logout")
-				.addLogoutHandler(logoutService);
+				.addLogoutHandler(logoutService)
+				.logoutSuccessUrl("/success/logout")
+				.permitAll();
 		http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.cors().and().csrf().disable();
