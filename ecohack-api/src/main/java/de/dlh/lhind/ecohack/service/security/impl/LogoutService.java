@@ -30,9 +30,7 @@ public class LogoutService implements ILogoutService {
             , HttpServletResponse response, Authentication authentication) {
         var token = TokenUtil.getTokenFromRequest(request);
         // validating if request has an access token
-        try {
-            tokenProvider.getUsernameFromAccessToken(token);
-        } catch (UnAuthorizedException unAuthorizedException){
+        if (!tokenProvider.accessTokenIsValid(token)){
             log.error(Constants.UNAUTHORIZED_MESSAGE);
             isLoggedOut = false;
             return;

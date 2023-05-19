@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder bcryptEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     private User findUserByEmail(String email) {
@@ -32,7 +32,7 @@ public class UserService implements IUserService {
     public User saveUser(UserDto userDto){
         var user = userMapper.userDtoToEntity(userDto);
         var saltedPassword = PasswordUtil.getSaltedPassword(userDto.getPassword());
-        user.setPassword(bcryptEncoder.encode(saltedPassword));
+        user.setPassword(passwordEncoder.encode(saltedPassword));
         return userRepository.save(user);
     }
 
@@ -45,7 +45,7 @@ public class UserService implements IUserService {
     @Override
     public UserDto getUserByUsername(String username){
         var user = findUserByEmail(username);
-        return userMapper.userToUserDto(user);
+        return mapEntityToDto(user);
     }
 
     @Override

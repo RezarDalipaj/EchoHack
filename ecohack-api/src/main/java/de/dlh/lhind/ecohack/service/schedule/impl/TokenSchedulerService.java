@@ -1,6 +1,5 @@
 package de.dlh.lhind.ecohack.service.schedule.impl;
 
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.repository.TokenRepository;
 import de.dlh.lhind.ecohack.security.token.TokenProvider;
 import de.dlh.lhind.ecohack.service.schedule.ITokenSchedulerService;
@@ -19,24 +18,17 @@ public class TokenSchedulerService implements ITokenSchedulerService {
     private final TokenProvider tokenProvider;
 
     @Override
-    @Scheduled(initialDelay = 60000, fixedDelay = 180000)
+    @Scheduled(initialDelay = 60 * 1000, fixedDelay = 3 * 60 * 1000)
     @Transactional
     public void deleteExpiredTokens(){
         log.info("Executing scheduler");
-        tokenRepository.findAll().forEach(token -> {
-            // if it's a valid access token don't do anything
-            try {
-                tokenProvider.getUsernameFromAccessToken(token.getValue());
-            } catch (UnAuthorizedException unAuthorizedException){
-                // if it's a valid refresh token don't do anything
-                try {
-                    tokenProvider.getUsernameFromRefreshToken(token.getValue());
-                } catch (UnAuthorizedException exception) {
-                    // else delete the token
-                    tokenRepository.delete(token);
-                    log.warn("Deleted token with id {} from db", token.getId());
-                }
-            }
+        tokenRepository.findAll().forEach(tokenEntity -> {
+            //if token is either a valid access or refresh token don't do anything
+            if (tokenProvider.tokenIsValid(tokenEntity.getValue()))
+                return;
+            // else delete the token
+            tokenRepository.delete(tokenEntity);
+            log.warn("Deleted token with id {} from db", tokenEntity.getId());
         });
     }
 }

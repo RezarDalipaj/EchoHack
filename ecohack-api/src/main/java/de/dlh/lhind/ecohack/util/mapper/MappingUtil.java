@@ -34,7 +34,7 @@ public final class MappingUtil {
         return PaymentMethod.CASH;
     }
 
-    public static String getRoleFromUserDetails(Collection<? extends GrantedAuthority> authorities)
+    public static String mapAuthoritiesToRole(Collection<? extends GrantedAuthority> authorities)
             throws UnAuthorizedException {
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)

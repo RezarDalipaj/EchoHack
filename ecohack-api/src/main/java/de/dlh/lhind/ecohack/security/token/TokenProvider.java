@@ -89,7 +89,27 @@ public class TokenProvider {
         tokenRepository.save(tokenEntity);
     }
 
-    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, Boolean isAccess) {
+    public Optional<Jws<Claims>> validateAccessTokenAndGetJws(String token){
+        return validateTokenAndGetJws(token, true);
+    }
+
+    public Optional<Jws<Claims>> validateRefreshTokenAndGetJws(String token){
+        return validateTokenAndGetJws(token, false);
+    }
+
+    public Boolean accessTokenIsValid(String token){
+        return validateAccessTokenAndGetJws(token).isPresent();
+    }
+
+    public Boolean refreshTokenIsValid(String token){
+        return validateRefreshTokenAndGetJws(token).isPresent();
+    }
+
+    public Boolean tokenIsValid(String token){
+        return accessTokenIsValid(token) || refreshTokenIsValid(token);
+    }
+
+    private Optional<Jws<Claims>> validateTokenAndGetJws(String token, Boolean isAccess) {
         if (tokenDoesNotExist(token))
             return Optional.empty();
         try {
@@ -124,12 +144,12 @@ public class TokenProvider {
     }
 
     private Jws<Claims> getClaimsFromRefreshToken(String token) throws UnAuthorizedException {
-        var claims = validateTokenAndGetJws(token, false);
+        var claims = validateRefreshTokenAndGetJws(token);
         return claims.orElseThrow(UnAuthorizedException::new);
     }
 
     private Jws<Claims> getClaimsFromAccessToken(String token) throws UnAuthorizedException {
-        var claims = validateTokenAndGetJws(token, true);
+        var claims = validateAccessTokenAndGetJws(token);
         return claims.orElseThrow(UnAuthorizedException::new);
     }
 

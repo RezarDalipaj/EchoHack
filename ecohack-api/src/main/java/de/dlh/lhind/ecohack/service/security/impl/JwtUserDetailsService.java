@@ -20,10 +20,10 @@ public class JwtUserDetailsService implements IJwtUserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userService.getUserByUsername(username);
+        var userDto = userService.getUserByUsername(username);
 
         Collection<SimpleGrantedAuthority> authorityCollection = new ArrayList<>();
-        authorityCollection.add(new SimpleGrantedAuthority(user.getRole()));
-        return new User(user.getUsername(), user.getPassword(), authorityCollection);
+        authorityCollection.add(new SimpleGrantedAuthority(userDto.getRole()));
+        return new User(userDto.getUsername(), userDto.getPassword(), authorityCollection);
     }
 }
