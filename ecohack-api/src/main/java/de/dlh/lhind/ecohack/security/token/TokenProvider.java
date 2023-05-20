@@ -57,13 +57,12 @@ public class TokenProvider {
         return buildAndSaveToken(user, false);
     }
 
-    @Transactional
-    public String buildAndSaveToken(UserDto userDto, Boolean isAccess) {
-        var signingKey = getKeyFromBoolean(isAccess);
+    private String buildAndSaveToken(UserDto userDto, Boolean isAccessToken) {
+        var signingKey = getKeyFromBoolean(isAccessToken);
         var token = Jwts.builder()
                 .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
-                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(getMinutesFromBoolean(isAccess)).toInstant()))
+                .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(getMinutesFromBoolean(isAccessToken)).toInstant()))
                 .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
                 .setId(UUID.randomUUID().toString())
                 .setIssuer(Constants.Token.TOKEN_ISSUER)
@@ -81,40 +80,39 @@ public class TokenProvider {
         return jwtProperties.getRefresh();
     }
 
-    @Transactional
-    public void saveToken(String token) {
+    private void saveToken(String token) {
         var tokenEntity = Token.builder()
                 .value(token)
                 .build();
         tokenRepository.save(tokenEntity);
     }
 
-    public Optional<Jws<Claims>> validateAccessTokenAndGetJws(String token){
+    private Optional<Jws<Claims>> validateAccessTokenAndGetJws(String token){
         return validateTokenAndGetJws(token, true);
     }
 
-    public Optional<Jws<Claims>> validateRefreshTokenAndGetJws(String token){
+    private Optional<Jws<Claims>> validateRefreshTokenAndGetJws(String token){
         return validateTokenAndGetJws(token, false);
     }
 
-    public Boolean accessTokenIsValid(String token){
+    public boolean accessTokenIsValid(String token){
         return validateAccessTokenAndGetJws(token).isPresent();
     }
 
-    public Boolean refreshTokenIsValid(String token){
+    public boolean refreshTokenIsValid(String token){
         return validateRefreshTokenAndGetJws(token).isPresent();
     }
 
-    public Boolean tokenIsValid(String token){
+    public boolean tokenIsValid(String token){
         return accessTokenIsValid(token) || refreshTokenIsValid(token);
     }
 
-    private Optional<Jws<Claims>> validateTokenAndGetJws(String token, Boolean isAccess) {
+    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, Boolean isAccessToken) {
         if (tokenDoesNotExist(token))
             return Optional.empty();
         try {
             Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(getKeyFromBoolean(isAccess))
+                    .setSigningKey(getKeyFromBoolean(isAccessToken))
                     .build()
                     .parseClaimsJws(token);
 
@@ -153,7 +151,7 @@ public class TokenProvider {
         return claims.orElseThrow(UnAuthorizedException::new);
     }
 
-    public  <T> T getClaimFromToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
+    public  <T> T getClaimFromAccessToken(String token, String claimType, Class<T> claimClass) throws UnAuthorizedException {
         var claims = getClaimsFromAccessToken(token);
         return claims.getBody().get(claimType, claimClass);
     }
@@ -184,7 +182,7 @@ public class TokenProvider {
     }
 
     public String getRoleFromToken(String token) throws UnAuthorizedException {
-        return getClaimFromToken(token, "role", String.class);
+        return getClaimFromAccessToken(token, "role", String.class);
     }
 }
 
