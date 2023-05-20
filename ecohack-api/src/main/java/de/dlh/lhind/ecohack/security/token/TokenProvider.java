@@ -57,7 +57,7 @@ public class TokenProvider {
         return buildAndSaveToken(user, false);
     }
 
-    private String buildAndSaveToken(UserDto userDto, Boolean isAccessToken) {
+    private String buildAndSaveToken(UserDto userDto, boolean isAccessToken) {
         var signingKey = getKeyFromBoolean(isAccessToken);
         var token = Jwts.builder()
                 .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
@@ -74,8 +74,8 @@ public class TokenProvider {
         return token;
     }
 
-    private Integer getMinutesFromBoolean (Boolean isAccess) {
-        if (Boolean.TRUE.equals(isAccess))
+    private Integer getMinutesFromBoolean (boolean isAccess) {
+        if (isAccess)
             return jwtProperties.getAccess();
         return jwtProperties.getRefresh();
     }
@@ -103,11 +103,11 @@ public class TokenProvider {
         return validateRefreshTokenAndGetJws(token).isPresent();
     }
 
-    public boolean tokenIsValid(String token){
+    public Boolean tokenIsValid(String token){
         return accessTokenIsValid(token) || refreshTokenIsValid(token);
     }
 
-    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, Boolean isAccessToken) {
+    public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccessToken) {
         if (tokenDoesNotExist(token))
             return Optional.empty();
         try {
@@ -135,8 +135,8 @@ public class TokenProvider {
         return !tokenRepository.existsByValue(token);
     }
 
-    private byte[] getKeyFromBoolean(Boolean isAccess){
-        if (Boolean.TRUE.equals(isAccess))
+    private byte[] getKeyFromBoolean(boolean isAccess){
+        if (isAccess)
             return jwtSecret.getAccess().getBytes();
         return jwtSecret.getRefresh().getBytes();
     }

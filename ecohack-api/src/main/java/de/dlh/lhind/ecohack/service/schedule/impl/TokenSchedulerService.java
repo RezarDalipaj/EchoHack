@@ -23,8 +23,9 @@ public class TokenSchedulerService implements ITokenSchedulerService {
     public void deleteExpiredTokens(){
         log.info("Executing scheduler");
         tokenRepository.findAll().forEach(tokenEntity -> {
+            var tokenIsValid = tokenProvider.tokenIsValid(tokenEntity.getValue());
             //if token is either a valid access or refresh token don't do anything
-            if (tokenProvider.tokenIsValid(tokenEntity.getValue()))
+            if (Boolean.TRUE.equals(tokenIsValid))
                 return;
             // else delete the token
             tokenRepository.delete(tokenEntity);

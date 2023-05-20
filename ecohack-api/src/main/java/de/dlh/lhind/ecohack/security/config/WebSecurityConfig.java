@@ -25,6 +25,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
 		http.authorizeHttpRequests()
 				.requestMatchers("/public/**", "/auth/**", "/oauth2/**").permitAll()
 				.requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()

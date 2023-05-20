@@ -12,6 +12,7 @@ spring:
     username: ecoHack
     password: ecoPassword
 
+
 app:
   jwt:
     # Signing key for HS512 algorithm
@@ -30,3 +31,12 @@ logging:
   level:
     org.springframework.security: DEBUG
     # org.hibernate.SQL: DEBUG
+
+server:
+  ssl:
+    key-store: classpath:echoHack.p12
+    key-store-password: password
+    key-store-type: pkcs12
+    key-alias: echoHack
+    key-password: password
+  port: 8443
