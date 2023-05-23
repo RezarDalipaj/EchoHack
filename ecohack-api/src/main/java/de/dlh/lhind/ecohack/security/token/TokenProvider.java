@@ -1,7 +1,6 @@
 package de.dlh.lhind.ecohack.security.token;
 
 import de.dlh.lhind.ecohack.config.properties.JwtProperties;
-import de.dlh.lhind.ecohack.config.properties.JwtSecret;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.UserMapper;
 import de.dlh.lhind.ecohack.model.dto.UserDto;
@@ -38,7 +37,6 @@ public class TokenProvider {
 
     private final TokenRepository tokenRepository;
     private final UserMapper userMapper;
-    private final JwtSecret jwtSecret;
     private final JwtProperties jwtProperties;
 
     @Transactional
@@ -76,8 +74,8 @@ public class TokenProvider {
 
     private Integer getMinutesFromBoolean (boolean isAccess) {
         if (isAccess)
-            return jwtProperties.getAccess();
-        return jwtProperties.getRefresh();
+            return jwtProperties.getAccessMinutes();
+        return jwtProperties.getRefreshMinutes();
     }
 
     private void saveToken(String token) {
@@ -137,8 +135,8 @@ public class TokenProvider {
 
     private byte[] getKeyFromBoolean(boolean isAccess){
         if (isAccess)
-            return jwtSecret.getAccess().getBytes();
-        return jwtSecret.getRefresh().getBytes();
+            return jwtProperties.getAccessSecret().getBytes();
+        return jwtProperties.getRefreshSecret().getBytes();
     }
 
     private Jws<Claims> getClaimsFromRefreshToken(String token) throws UnAuthorizedException {

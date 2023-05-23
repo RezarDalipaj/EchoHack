@@ -6,10 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "app.jwt.expiration.minutes")
+@ConfigurationProperties(prefix = "app.jwt")
 @Getter
 @Setter
 public class JwtProperties {
-    private Integer access;
-    private Integer refresh;
+    private Integer accessMinutes;
+    private Integer refreshMinutes;
+    private String accessSecret;
+    private String refreshSecret;
 }

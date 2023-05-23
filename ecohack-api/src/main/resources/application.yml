@@ -15,15 +15,14 @@ spring:
 
 app:
   jwt:
-    # Signing key for HS512 algorithm
-    # In http://www.allkeysgenerator.com/ you can generate all kinds of keys
-    secret:
-      access: geekSquad1617478ibsdcfidsbvnsdvbnvuinyvbnkbfisdigvbnsdvnfvusdbncdsuvsdnvbdsvdsuibyuvbsdfuy
-      refresh: fmwpiforenodnfofnoufmudsonrfnsdofnweuofnsdoufwnvmsduofehffhnohryjhpjypjhpympd[knt[okdfjsjg
-    expiration:
-      minutes:
-        access: 10
-        refresh: 60
+  # Signing key for HS512 algorithm
+  # In http://www.allkeysgenerator.com/ you can generate all kinds of keys
+    accessSecret: geekSquad1617478ibsdcfidsbvnsdvbnvuinyvbnkbfisdigvbnsdvnfvusdbncdsuvsdnvbdsvdsuibyuvbsdfuy
+    refreshSecret: fmwpiforenodnfofnoufmudsonrfnsdofnweuofnsdoufwnvmsduofehffhnohryjhpjypjhpympd[knt[okdfjsjg
+#        10 minutes
+    accessMinutes: 10
+#        1 year
+    refreshMinutes: 525600
   cors:
     allowed-origins: "*"
 
