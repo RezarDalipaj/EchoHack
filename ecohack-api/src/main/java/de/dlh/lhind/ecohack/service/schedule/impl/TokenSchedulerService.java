@@ -18,7 +18,7 @@ public class TokenSchedulerService implements ITokenSchedulerService {
     private final TokenProvider tokenProvider;
 
     @Override
-    @Scheduled(initialDelay = 60 * 1000, fixedDelay = 3 * 60 * 1000)
+    @Scheduled(initialDelay = 10 * 1000, fixedDelay = 3 * 60 * 1000)
     @Transactional
     public void deleteExpiredTokens(){
         log.info("Executing scheduler");
