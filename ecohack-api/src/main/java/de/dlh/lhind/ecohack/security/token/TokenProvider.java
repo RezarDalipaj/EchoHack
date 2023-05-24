@@ -39,6 +39,10 @@ public class TokenProvider {
     private final UserMapper userMapper;
     private final JwtProperties jwtProperties;
 
+    private byte[] getSigningKey(){
+        return jwtProperties.getAccessSecret().getBytes();
+    }
+
     @Transactional
     public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -56,10 +60,9 @@ public class TokenProvider {
     }
 
     private String buildAndSaveToken(UserDto userDto, boolean isAccessToken) {
-        var signingKey = getKeyFromBoolean(isAccessToken);
         var token = Jwts.builder()
                 .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
-                .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
+                .signWith(Keys.hmacShaKeyFor(getSigningKey()), SignatureAlgorithm.HS512)
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(getMinutesFromBoolean(isAccessToken)).toInstant()))
                 .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
                 .setId(UUID.randomUUID().toString())
@@ -68,19 +71,20 @@ public class TokenProvider {
                 .setSubject(userDto.getUsername())
                 .claim("role", userDto.getRole())
                 .compact();
-        saveToken(token);
+        saveToken(token, isAccessToken);
         return token;
     }
 
-    private Integer getMinutesFromBoolean (boolean isAccess) {
-        if (isAccess)
+    private Integer getMinutesFromBoolean (boolean isAccessToken) {
+        if (isAccessToken)
             return jwtProperties.getAccessMinutes();
         return jwtProperties.getRefreshMinutes();
     }
 
-    private void saveToken(String token) {
+    private void saveToken(String token, boolean isAccessToken) {
         var tokenEntity = Token.builder()
                 .value(token)
+                .refresh(!isAccessToken)
                 .build();
         tokenRepository.save(tokenEntity);
     }
@@ -106,11 +110,11 @@ public class TokenProvider {
     }
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccessToken) {
-        if (tokenDoesNotExist(token))
+        if (!tokenIsValidFromDb(token, isAccessToken))
             return Optional.empty();
         try {
             Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(getKeyFromBoolean(isAccessToken))
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
 
@@ -129,14 +133,9 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    private boolean tokenDoesNotExist(String token){
-        return !tokenRepository.existsByValue(token);
-    }
-
-    private byte[] getKeyFromBoolean(boolean isAccess){
-        if (isAccess)
-            return jwtProperties.getAccessSecret().getBytes();
-        return jwtProperties.getRefreshSecret().getBytes();
+    private boolean tokenIsValidFromDb(String token, boolean isAccessToken){
+        var optionalToken = tokenRepository.findByValueAndRefresh(token, !isAccessToken);
+        return optionalToken.isPresent();
     }
 
     private Jws<Claims> getClaimsFromRefreshToken(String token) throws UnAuthorizedException {
