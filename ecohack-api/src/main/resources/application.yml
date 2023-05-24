@@ -21,8 +21,8 @@ app:
     refreshSecret: fmwpiforenodnfofnoufmudsonrfnsdofnweuofnsdoufwnvmsduofehffhnohryjhpjypjhpympd[knt[okdfjsjg
 #        10 minutes
     accessMinutes: 10
-#        1 year
-    refreshMinutes: 525600
+#        1 day
+    refreshMinutes: 1440
   cors:
     allowed-origins: "*"
 
