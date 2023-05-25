@@ -30,7 +30,4 @@ public class Token {
 
     @Column(columnDefinition = "TEXT")
     private String value;
-
-    @Column(name = "is_refresh")
-    private boolean refresh;
 }

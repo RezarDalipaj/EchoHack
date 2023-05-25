@@ -70,8 +70,9 @@ public class TokenProvider {
                 .setAudience(Constants.Token.TOKEN_AUDIENCE)
                 .setSubject(userDto.getUsername())
                 .claim("role", userDto.getRole())
+                .claim(Constants.Token.ACCESS_CLAIM, String.valueOf(isAccessToken))
                 .compact();
-        saveToken(token, isAccessToken);
+        saveToken(token);
         return token;
     }
 
@@ -81,10 +82,9 @@ public class TokenProvider {
         return jwtProperties.getRefreshMinutes();
     }
 
-    private void saveToken(String token, boolean isAccessToken) {
+    private void saveToken(String token) {
         var tokenEntity = Token.builder()
                 .value(token)
-                .refresh(!isAccessToken)
                 .build();
         tokenRepository.save(tokenEntity);
     }
@@ -110,15 +110,17 @@ public class TokenProvider {
     }
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccessToken) {
-        if (!tokenIsValidFromDb(token, isAccessToken))
+        if (!tokenIsValidFromDb(token))
             return Optional.empty();
+
         try {
             Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
 
-            return Optional.of(jws);
+            return validateTokenTypeAndGetClaims(jws, isAccessToken);
+
         } catch (ExpiredJwtException exception) {
             log.error("Request to parse expired JWT failed : {}", exception.getMessage());
         } catch (UnsupportedJwtException exception) {
@@ -133,9 +135,16 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    private boolean tokenIsValidFromDb(String token, boolean isAccessToken){
-        var optionalToken = tokenRepository.findByValueAndRefresh(token, !isAccessToken);
-        return optionalToken.isPresent();
+    private Optional<Jws<Claims>> validateTokenTypeAndGetClaims(Jws<Claims> jws, boolean isAccessToken){
+        var isAccessClaim = jws.getBody().get(Constants.Token.ACCESS_CLAIM, String.class);
+        var tokenTypeIsValid = Boolean.valueOf(isAccessToken).equals(Boolean.valueOf(isAccessClaim));
+        if (tokenTypeIsValid)
+            return Optional.of(jws);
+        return Optional.empty();
+    }
+
+    private boolean tokenIsValidFromDb(String token){
+        return tokenRepository.existsByValue(token);
     }
 
     private Jws<Claims> getClaimsFromRefreshToken(String token) throws UnAuthorizedException {
