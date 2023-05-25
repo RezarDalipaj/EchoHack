@@ -59,7 +59,7 @@ public class TokenProvider {
         return buildAndSaveToken(user, false);
     }
 
-    private String buildAndSaveToken(UserDto userDto, boolean isAccessToken) {
+    private String buildAndSaveToken(UserDto userDto, Boolean isAccessToken) {
         var token = Jwts.builder()
                 .setHeaderParam("type", Constants.Token.TOKEN_TYPE)
                 .signWith(Keys.hmacShaKeyFor(getSigningKey()), SignatureAlgorithm.HS512)
@@ -70,7 +70,7 @@ public class TokenProvider {
                 .setAudience(Constants.Token.TOKEN_AUDIENCE)
                 .setSubject(userDto.getUsername())
                 .claim("role", userDto.getRole())
-                .claim(Constants.Token.ACCESS_CLAIM, String.valueOf(isAccessToken))
+                .claim(Constants.Token.ACCESS_CLAIM, isAccessToken)
                 .compact();
         saveToken(token);
         return token;
@@ -110,7 +110,7 @@ public class TokenProvider {
     }
 
     public Optional<Jws<Claims>> validateTokenAndGetJws(String token, boolean isAccessToken) {
-        if (!tokenIsValidFromDb(token))
+        if (!tokenExistsInDb(token))
             return Optional.empty();
 
         try {
@@ -135,15 +135,14 @@ public class TokenProvider {
         return Optional.empty();
     }
 
-    private Optional<Jws<Claims>> validateTokenTypeAndGetClaims(Jws<Claims> jws, boolean isAccessToken){
-        var isAccessClaim = jws.getBody().get(Constants.Token.ACCESS_CLAIM, String.class);
-        var tokenTypeIsValid = Boolean.valueOf(isAccessToken).equals(Boolean.valueOf(isAccessClaim));
-        if (tokenTypeIsValid)
+    private Optional<Jws<Claims>> validateTokenTypeAndGetClaims(Jws<Claims> jws, Boolean isAccessToken){
+        var isAccessClaim = jws.getBody().get(Constants.Token.ACCESS_CLAIM, Boolean.class);
+        if (isAccessToken.equals(isAccessClaim))
             return Optional.of(jws);
         return Optional.empty();
     }
 
-    private boolean tokenIsValidFromDb(String token){
+    private boolean tokenExistsInDb(String token){
         return tokenRepository.existsByValue(token);
     }
 

@@ -19,6 +19,6 @@ public final class Constants {
         public static final String TOKEN_AUDIENCE = "order-app";
         public static final String TOKEN_HEADER = "Authorization";
         public static final String TOKEN_PREFIX = "Bearer ";
-        public static final String ACCESS_CLAIM = "is_access";
+        public static final String ACCESS_CLAIM = "is_access_token";
     }
 }
