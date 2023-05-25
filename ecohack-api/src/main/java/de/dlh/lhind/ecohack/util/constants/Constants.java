@@ -11,6 +11,7 @@ public final class Constants {
     public static final String SALT = "fouwrhvn";
     public static final String ERROR_MESSAGE = "An error occurred";
     public static final String LOGOUT_SUCCESS = "You have successfully logged out";
+    public static final String LOGOUT_FAILED = "Could not logout! Invalid token!";
 
     @UtilityClass
     public static final class Token {
