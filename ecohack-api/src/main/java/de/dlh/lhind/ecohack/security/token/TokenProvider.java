@@ -40,7 +40,7 @@ public class TokenProvider {
     private final JwtProperties jwtProperties;
 
     private byte[] getSigningKey(){
-        return jwtProperties.getAccessSecret().getBytes();
+        return jwtProperties.getSecret().getBytes();
     }
 
     @Transactional

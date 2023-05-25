@@ -12,6 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class JwtProperties {
     private Integer accessMinutes;
     private Integer refreshMinutes;
-    private String accessSecret;
-    private String refreshSecret;
+    private String secret;
 }
