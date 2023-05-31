@@ -12,6 +12,7 @@ public interface IClientService {
 
 
     TokenDto save(ClientDto clientDto) throws BadRequestException, UnAuthorizedException;
+    ClientDto update(ClientDto clientDto) throws BadRequestException;
     QuizResponse takeQuiz(QuestionnaireDto questionnaire, String username) throws BadRequestException;
     Integer getPoints(String username);
     ClientDto findById(Long clientId);

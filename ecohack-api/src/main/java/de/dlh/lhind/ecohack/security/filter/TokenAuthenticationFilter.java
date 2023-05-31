@@ -31,7 +31,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         try {
             var isAccessToken = isNotRefreshEndpoint(request);
             TokenUtil.getJwtFromRequest(request)
-                    .flatMap(token -> tokenProvider.validateTokenAndGetJws(token, isAccessToken))
+                    .flatMap(token ->
+                            tokenProvider.validateTokenAndGetJws(token, isAccessToken))
                     .ifPresent(jws -> {
                         var username = jws.getBody().getSubject();
                         var userDetails = userDetailsService.loadUserByUsername(username);

@@ -30,14 +30,14 @@ public class MealController {
     private final TokenProvider tokenProvider;
 
     @GetMapping()
-    public ResponseEntity<List<MealDto>> findAllByClientId(@RequestParam String username, @RequestParam int pageSize, @RequestParam int pageNumber) {
-        return ResponseEntity.ok(mealService.findAllByClientUsername(username, pageSize, pageNumber));
+    public ResponseEntity<List<MealDto>> findAllByClient(@RequestParam int pageSize, @RequestParam int pageNumber, HttpServletRequest request) throws UnAuthorizedException {
+        return ResponseEntity.ok(mealService.findAllByClientUsername(tokenProvider.getUsernameFromRequest(request), pageSize, pageNumber));
     }
 
     @PreAuthorize("hasAuthority('PROVIDER')")
     @PutMapping("/image")
-    public void uploadImage(@RequestParam("image") MultipartFile image, @RequestParam Long mealId) throws IOException {
-        mealService.uploadImage(image, mealId);
+    public void uploadImage(@RequestParam("image") MultipartFile image, @RequestParam Long mealId, HttpServletRequest request) throws IOException, UnAuthorizedException {
+        mealService.uploadImage(image, mealId, tokenProvider.getUsernameFromRequest(request));
     }
 
     @PreAuthorize("hasAuthority('PROVIDER')")
@@ -48,7 +48,7 @@ public class MealController {
 
     @GetMapping("/provider")
     @PreAuthorize("hasAuthority('PROVIDER')")
-    public ResponseEntity<List<MealDto>> findAllByProviderId(@RequestParam int pageSize, @RequestParam int pageNumber
+    public ResponseEntity<List<MealDto>> findAllByProvider(@RequestParam int pageSize, @RequestParam int pageNumber
             , HttpServletRequest request) throws UnAuthorizedException {
         return ResponseEntity.ok(mealService.findAllByProviderUsername(tokenProvider.getUsernameFromRequest
                 (request), pageSize, pageNumber));

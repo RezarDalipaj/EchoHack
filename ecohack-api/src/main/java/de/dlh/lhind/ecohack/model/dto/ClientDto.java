@@ -20,6 +20,8 @@ public class ClientDto extends LoginDto {
     @NotNull
     private Double latitude;
     @NotNull
+    private Double balance;
+    @NotNull
     private Double longtitude;
     private String paymentMethod;
     private Integer rankingPoints;

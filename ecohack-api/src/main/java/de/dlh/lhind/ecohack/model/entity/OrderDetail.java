@@ -15,6 +15,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table
 @Getter
@@ -39,6 +41,9 @@ public class OrderDetail {
 
     @Column(name = "distance")
     private Double distanceInMeters;
+
+    @Column(name = "order_date")
+    private LocalDateTime orderDate;
 
     @OneToOne
     @JoinColumn(name = "order_id", nullable = false)

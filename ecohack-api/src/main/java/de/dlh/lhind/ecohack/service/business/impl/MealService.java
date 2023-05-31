@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.service.business.impl;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.MealMapper;
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
@@ -53,15 +54,22 @@ public class MealService implements IMealService {
         return mealMapper.toMealDtoList(mealRepository.findAllByFoodProvider_User_Email(username, pageable));
     }
 
-
     @Override
     @Transactional
-    public void uploadImage(MultipartFile image, Long mealId) throws IOException {
+    public void uploadImage(MultipartFile image, Long mealId, String username) throws IOException, UnAuthorizedException {
+        validateIfMealBelongsToTheLoggedInProvider(username, mealId);
 
         byte[] imageData = image.getBytes();
         String imageBase64 = Base64.getEncoder().encodeToString(imageData);
 
         updateImage(imageBase64, mealId);
+    }
+
+    private void validateIfMealBelongsToTheLoggedInProvider(String username, Long mealId) throws UnAuthorizedException {
+        var meal = findEntityById(mealId);
+        var provider = providerService.findByEmail(username);
+        if (!provider.equals(meal.getFoodProvider()))
+            throw new UnAuthorizedException("Unauthorized! This is not your meal");
     }
 
     @Override
@@ -73,7 +81,7 @@ public class MealService implements IMealService {
     public Meal findEntityById(Long id) {
         Optional<Meal> mealOptional = mealRepository.findById(id);
         if (mealOptional.isEmpty())
-            throw new NullPointerException("Meal with id " + id + " doesn't exist");
+            throw new NullPointerException("Meal with id ".concat(id.toString()).concat(" doesn't exist"));
         return mealOptional.get();
     }
 

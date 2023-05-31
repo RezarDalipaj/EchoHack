@@ -29,11 +29,42 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public User saveUser(UserDto userDto){
+    public User saveUser(UserDto userDto) throws BadRequestException {
+        var userId = userDto.getId();
+        if (userId == null)
+            return save(userDto);
+        return update(userDto);
+    }
+
+    private User save(UserDto userDto) {
         var user = userMapper.userDtoToEntity(userDto);
-        var saltedPassword = PasswordUtil.getSaltedPassword(userDto.getPassword());
-        user.setPassword(passwordEncoder.encode(saltedPassword));
+        setPassword(user, userDto.getPassword());
         return userRepository.save(user);
+    }
+
+    private User update(UserDto userDto) throws BadRequestException {
+        var user = findEntityById(userDto.getId());
+        var username = userDto.getUsername();
+        var rawPassword = userDto.getPassword();
+        if (username != null){
+            validateUsername(username);
+            user.setEmail(username);
+        }
+        if (rawPassword != null)
+            setPassword(user, rawPassword);
+        return userRepository.save(user);
+    }
+
+    private User findEntityById(Long id){
+        var user = userRepository.findById(id);
+        if (user.isEmpty())
+            throw new NullPointerException("User with id ".concat(id.toString()).concat(" not found"));
+        return user.get();
+    }
+
+    private void setPassword(User user, String rawPassword){
+        var saltedPassword = PasswordUtil.getSaltedPassword(rawPassword);
+        user.setPassword(passwordEncoder.encode(saltedPassword));
     }
 
     @Override

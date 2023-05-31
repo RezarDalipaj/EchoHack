@@ -29,9 +29,6 @@ public class Order {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "order_date")
-    private LocalDateTime orderDate;
-
     @Column(name = "comment")
     private String comment;
 
@@ -42,7 +39,7 @@ public class Order {
     @ManyToMany(mappedBy = "orders", fetch = FetchType.EAGER)
     private List<Meal> meals;
 
-    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private OrderDetail orderDetail;
 
 }

@@ -44,6 +44,9 @@ public class Client {
     private Double longtitude;
 
     @Column
+    private Double balance;
+
+    @Column
     private Integer rankingPoints;
 
     @Column

@@ -5,7 +5,7 @@ import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.User;
 
 public interface IUserService {
-    User saveUser(UserDto user);
+    User saveUser(UserDto user) throws BadRequestException;
     void validateUsername(String username) throws BadRequestException;
 
     UserDto getUserByUsername(String username);

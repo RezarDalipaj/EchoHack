@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.service.business;
 
+import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.model.entity.Meal;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,7 +14,7 @@ public interface IMealService {
 
     List<MealDto> findAllByProviderUsername(String username, int pageSize, int pageNumber);
 
-    void uploadImage(MultipartFile image, Long mealId) throws IOException;
+    void uploadImage(MultipartFile image, Long mealId, String username) throws IOException, UnAuthorizedException;
     MealDto findById(Long id);
     Meal findEntityById(Long id);
     MealDto save(MealDto mealDto, String username);

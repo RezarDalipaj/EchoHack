@@ -7,9 +7,9 @@ public final class PasswordUtil {
 
     private final String salt = Constants.SALT;
     private final Integer halfSaltLength = salt.length()/2;
+    private final String halfSalt = salt.substring(0, halfSaltLength);
 
     public static String getSaltedPassword(String password){
-        var halfSalt = salt.substring(0, halfSaltLength);
-        return halfSalt + password.concat(salt);
+        return halfSalt.concat(password).concat(salt);
     }
 }

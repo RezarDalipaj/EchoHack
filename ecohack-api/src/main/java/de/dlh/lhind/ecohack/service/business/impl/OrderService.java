@@ -1,12 +1,13 @@
 package de.dlh.lhind.ecohack.service.business.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
+import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.OrderDto;
-import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.entity.Meal;
 import de.dlh.lhind.ecohack.model.entity.Order;
 import de.dlh.lhind.ecohack.model.entity.OrderDetail;
 import de.dlh.lhind.ecohack.model.enumeration.OrderStatus;
+import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import de.dlh.lhind.ecohack.repository.OrderRepository;
 import de.dlh.lhind.ecohack.service.business.IClientService;
 import de.dlh.lhind.ecohack.service.business.IMealService;
@@ -37,24 +38,32 @@ public class OrderService implements IOrderService {
             var mealEntity = mealService.findEntityById(meal.getMealId());
             order.getMeals().add(mealEntity);
         }
-        order.setOrderDetail(setOrderDetails(client, order.getMeals()));
-        order.setOrderDate(LocalDateTime.now());
+        var prices = order.getMeals().stream()
+                .map(Meal::getPrice)
+                .toList();
+        var price = calculatePrice(prices);
+        order.setOrderDetail(setOrderDetails(client.getPaymentMethod(), price));
+        var clientDto = new ClientDto();
+        clientDto.setId(client.getId());
+        clientDto.setBalance(client.getBalance() - price);
+        clientService.update(clientDto);
         orderRepository.save(order);
     }
 
-    private OrderDetail setOrderDetails(Client client, List<Meal> meals){
+    private OrderDetail setOrderDetails(PaymentMethod paymentMethod, Double price){
         var details = new OrderDetail();
         details.setStatus(OrderStatus.ACCEPTED);
-        details.setPaymentMethod(client.getPaymentMethod());
-        details.setPrice(calculatePrice(meals));
+        details.setPaymentMethod(paymentMethod);
+        details.setPrice(price);
+        details.setOrderDate(LocalDateTime.now());
         return details;
     }
 
-    private Double calculatePrice(List<Meal> meals) {
-        Double price = 0D;
-        for (var meal : meals) {
-            price += meal.getPrice();
+    private Double calculatePrice(List<Double> prices) {
+        Double finalPrice = 0D;
+        for (var price : prices) {
+            finalPrice += price;
         }
-        return price;
+        return finalPrice;
     }
 }

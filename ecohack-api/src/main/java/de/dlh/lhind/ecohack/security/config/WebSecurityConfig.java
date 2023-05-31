@@ -26,18 +26,26 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.authorizeHttpRequests(authorize -> authorize.requestMatchers("/public/**", "/auth/**", "/oauth2/**").permitAll()
-				.requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
-				.anyRequest().authenticated());
+		http.authorizeHttpRequests(authorize ->
+				authorize.requestMatchers("/public/**", "/auth/**", "/oauth2/**")
+						.permitAll()
+				.requestMatchers("/", "/error", "/csrf", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**")
+						.permitAll()
+				.anyRequest()
+				.authenticated());
 
 		http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-		http.logout(logout -> logout.logoutUrl("/logout")
+
+		http.logout(logout ->
+				logout.logoutUrl("/logout")
 				.addLogoutHandler(logoutService)
 				.logoutSuccessUrl("/success/logout")
 				.permitAll());
 
-		http.exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
-		http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		http.exceptionHandling(e ->
+				e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+		http.sessionManagement(sessionManagement ->
+				sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.cors(AbstractHttpConfigurer::disable)
 				.csrf(AbstractHttpConfigurer::disable);
 		return http.build();

@@ -1,6 +1,7 @@
 package de.dlh.lhind.ecohack.mapper;
 
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
+import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.util.mapper.MappingUtil;
 import org.mapstruct.InjectionStrategy;
@@ -16,6 +17,8 @@ public interface ClientMapper {
     @Mapping(source = "user.email", target = "username")
     @Mapping(source = "user.password", target = "password")
     ClientDto clientToDto(Client client);
+
+    UserDto clientDtoToUserDto(ClientDto clientDto);
 
     @Mapping(target = "user.email", source = "username")
     @Mapping(target = "user.password", source = "password")
