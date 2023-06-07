@@ -3,8 +3,9 @@ package de.dlh.lhind.ecohack.api;
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
-import de.dlh.lhind.ecohack.model.dto.response.QuizResponse;
+import de.dlh.lhind.ecohack.model.dto.FilterDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
+import de.dlh.lhind.ecohack.model.dto.response.QuizResponse;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.security.token.TokenProvider;
 import de.dlh.lhind.ecohack.service.business.IClientService;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -35,5 +38,11 @@ public class ClientController {
     @PostMapping("/take/quiz")
     public ResponseEntity<QuizResponse> takeQuiz(@Valid @RequestBody QuestionnaireDto questionnaireDto, HttpServletRequest request) throws UnAuthorizedException, BadRequestException {
         return ResponseEntity.ok(clientService.takeQuiz(questionnaireDto, tokenProvider.getUsernameFromRequest(request)));
+    }
+
+    //test
+    @PostMapping("/client/filter")
+    public ResponseEntity<List<ClientDto>> filterClients(@Valid @RequestBody FilterDto filterDto) {
+        return ResponseEntity.ok(clientService.filterClients(filterDto));
     }
 }

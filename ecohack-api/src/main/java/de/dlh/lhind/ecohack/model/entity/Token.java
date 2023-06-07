@@ -23,9 +23,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Token {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(columnDefinition = "TEXT")

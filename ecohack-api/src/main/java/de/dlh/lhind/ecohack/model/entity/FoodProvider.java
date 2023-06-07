@@ -1,19 +1,15 @@
 package de.dlh.lhind.ecohack.model.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Table(name = "food_provider", uniqueConstraints = {
@@ -22,12 +18,15 @@ import java.util.List;
 })
 @Getter
 @Setter
-public class FoodProvider{
+public class FoodProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column
+    private String username;
 
     @OneToOne
     private User user;

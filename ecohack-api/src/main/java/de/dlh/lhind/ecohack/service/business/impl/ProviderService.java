@@ -11,6 +11,7 @@ import de.dlh.lhind.ecohack.repository.FoodProviderRepository;
 import de.dlh.lhind.ecohack.service.security.IAuthService;
 import de.dlh.lhind.ecohack.service.business.IProviderService;
 import de.dlh.lhind.ecohack.service.business.IUserService;
+import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,8 @@ public class ProviderService implements IProviderService {
     private final IAuthService authService;
     private final ProviderMapper providerMapper;
     private final IUserService userService;
+    private final FilterUtil<FoodProvider> filterUtil = new FilterUtil<>();
+
 
     @Override
     @Transactional
@@ -38,7 +41,7 @@ public class ProviderService implements IProviderService {
 
     @Override
     public FoodProvider findByEmail(String email) {
-        var provider = providerRepository.findByUser_Email(email);
+        var provider = providerRepository.findByUsername(email);
         if (provider == null)
             throw new NullPointerException("Provider with username " + email + " doesnt exist");
         return provider;

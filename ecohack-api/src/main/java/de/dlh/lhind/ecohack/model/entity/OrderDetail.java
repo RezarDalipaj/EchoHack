@@ -1,7 +1,6 @@
 package de.dlh.lhind.ecohack.model.entity;
 
 import de.dlh.lhind.ecohack.model.enumeration.OrderStatus;
-import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,22 +24,21 @@ public class OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
-    private PaymentMethod paymentMethod;
-
     @Column(name = "price")
     private Double price;
 
     @Column(name = "distance")
     private Double distanceInMeters;
+
+    @Column(name = "comment")
+    private String comment;
 
     @Column(name = "order_date")
     private LocalDateTime orderDate;

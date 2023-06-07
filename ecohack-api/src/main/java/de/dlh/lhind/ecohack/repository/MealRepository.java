@@ -4,13 +4,14 @@ import de.dlh.lhind.ecohack.model.entity.Meal;
 import de.dlh.lhind.ecohack.model.entity.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 
 @Repository
-public interface MealRepository extends JpaRepository<Meal, Long> {
+public interface MealRepository extends JpaRepository<Meal, Long>, JpaSpecificationExecutor<Meal> {
 
     List<Meal> findByTotalPointsBetween(int minPoints, int maxPoints, Pageable pageable);
     List<Meal> findAllByFoodProvider_User_Email(String email, Pageable pageable);

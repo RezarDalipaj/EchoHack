@@ -5,6 +5,7 @@ import de.dlh.lhind.ecohack.mapper.MealMapper;
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.model.dto.NutritionDto;
+import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.entity.Ingredient;
 import de.dlh.lhind.ecohack.model.entity.Meal;
 import de.dlh.lhind.ecohack.model.entity.Nutrition;
@@ -13,6 +14,7 @@ import de.dlh.lhind.ecohack.repository.MealRepository;
 import de.dlh.lhind.ecohack.service.business.IClientService;
 import de.dlh.lhind.ecohack.service.business.IMealService;
 import de.dlh.lhind.ecohack.service.business.IProviderService;
+import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,8 @@ public class MealService implements IMealService {
     private final IClientService clientService;
     private final IProviderService providerService;
     private final MealMapper mealMapper;
+    private final FilterUtil<Meal> filterUtil = new FilterUtil<>();
+
 
 
     @Override

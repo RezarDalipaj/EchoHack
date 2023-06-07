@@ -25,8 +25,11 @@ public class Client {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column
+    private String username;
 
     @OneToOne
     private User user;

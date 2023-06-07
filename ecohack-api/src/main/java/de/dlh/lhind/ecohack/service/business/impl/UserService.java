@@ -6,6 +6,7 @@ import de.dlh.lhind.ecohack.model.dto.UserDto;
 import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.repository.UserRepository;
 import de.dlh.lhind.ecohack.service.business.IUserService;
+import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import de.dlh.lhind.ecohack.util.security.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,8 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final FilterUtil<User> filterUtil = new FilterUtil<>();
+
 
     private User findUserByEmail(String email) {
         var entity = userRepository.findByEmail(email);

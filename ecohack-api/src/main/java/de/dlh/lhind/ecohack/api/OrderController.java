@@ -8,6 +8,7 @@ import de.dlh.lhind.ecohack.service.business.IOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('CLIENT')")
     @PostMapping
-    public void saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException, UnAuthorizedException {
-        orderService.save(orderDto, tokenProvider.getUsernameFromRequest(request));
+    public ResponseEntity<OrderDto> saveOrder(@Valid @RequestBody OrderDto orderDto, HttpServletRequest request) throws BadRequestException, UnAuthorizedException {
+        return ResponseEntity.ok(orderService.save(orderDto, tokenProvider.getUsernameFromRequest(request)));
     }
 }

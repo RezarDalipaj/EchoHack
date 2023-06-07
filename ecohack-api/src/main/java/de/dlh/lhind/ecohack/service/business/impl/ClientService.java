@@ -4,6 +4,7 @@ import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
 import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ClientMapper;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
+import de.dlh.lhind.ecohack.model.dto.FilterDto;
 import de.dlh.lhind.ecohack.model.dto.QuizDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
 import de.dlh.lhind.ecohack.model.dto.request.ResultDto;
@@ -12,12 +13,16 @@ import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
+import de.dlh.lhind.ecohack.repository.UserRepository;
 import de.dlh.lhind.ecohack.service.business.IClientService;
 import de.dlh.lhind.ecohack.service.business.IUserService;
 import de.dlh.lhind.ecohack.service.security.IAuthService;
+import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -29,6 +34,7 @@ public class ClientService implements IClientService {
     private final IUserService userService;
     private final ClientMapper clientMapper;
     private final QuizDto quizDto;
+    private final FilterUtil<Client> filterUtil = new FilterUtil<>();
 
     @Override
     @Transactional
@@ -122,10 +128,18 @@ public class ClientService implements IClientService {
 
     @Override
     public Client findClientByUsername(String username) {
-        var client = clientRepository.findByUser_Email(username);
+        var client = clientRepository.findByUsername(username);
         if (client.isEmpty())
             throw new NullPointerException("Client with username " + username + " not found");
         return client.get();
+    }
+
+    @Override
+    public List<ClientDto> filterClients(FilterDto filterDto) {
+        var specification = filterUtil.filter(filterDto);
+
+        var clients = clientRepository.findAll(specification);
+        return clientMapper.clientsToClientsDto(clients);
     }
 
     private void validateClientRegister(ClientDto clientDto) throws BadRequestException {

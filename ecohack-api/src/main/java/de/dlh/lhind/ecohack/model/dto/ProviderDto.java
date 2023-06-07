@@ -1,5 +1,6 @@
 package de.dlh.lhind.ecohack.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,4 +22,7 @@ public class ProviderDto extends LoginDto {
 
     @NotNull
     private Double longtitude;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String role;
 }
