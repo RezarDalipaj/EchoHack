@@ -8,15 +8,37 @@ import org.springframework.data.jpa.domain.Specification;
 @Slf4j
 public class FilterUtil<T> {
 
-    public Specification<T> filterByField(KeyValue keyValue) {
+    private Specification<T> filterEqualByField(KeyValue keyValue) {
         return (root, query, builder) -> builder.equal(root.get(keyValue.getKey()), keyValue.getValue());
     }
 
-    public Specification<T> filter(FilterDto filterDto){
-        var keyValues = filterDto.getKeyValues();
+    private Specification<T> filterLikeField(KeyValue keyValue) {
+        return (root, query, builder) -> builder.like(root.get(keyValue.getKey()), keyValue.getValue().toString());
+    }
+
+    public Specification<T> filterEqualAnd(FilterDto filterDto){
+        var keyValues = filterDto.getInternalKeyValues();
         Specification<T> specification = Specification.where(null);
         for (var keyValue : keyValues){
-            specification = specification.and(filterByField(keyValue));
+            specification = specification.and(filterEqualByField(keyValue));
+        }
+        return specification;
+    }
+
+    public Specification<T> filterLikeAnd(FilterDto filterDto){
+        var keyValues = filterDto.getInternalKeyValues();
+        Specification<T> specification = Specification.where(null);
+        for (var keyValue : keyValues){
+            specification = specification.and(filterLikeField(keyValue));
+        }
+        return specification;
+    }
+
+    public Specification<T> filterOr(FilterDto filterDto){
+        var keyValues = filterDto.getInternalKeyValues();
+        Specification<T> specification = Specification.where(null);
+        for (var keyValue : keyValues){
+            specification = specification.or(filterEqualByField(keyValue));
         }
         return specification;
     }

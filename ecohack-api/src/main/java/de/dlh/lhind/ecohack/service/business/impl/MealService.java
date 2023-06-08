@@ -5,7 +5,6 @@ import de.dlh.lhind.ecohack.mapper.MealMapper;
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
 import de.dlh.lhind.ecohack.model.dto.NutritionDto;
-import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.entity.Ingredient;
 import de.dlh.lhind.ecohack.model.entity.Meal;
 import de.dlh.lhind.ecohack.model.entity.Nutrition;

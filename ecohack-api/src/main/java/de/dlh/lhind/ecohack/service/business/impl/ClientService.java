@@ -5,12 +5,14 @@ import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ClientMapper;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.FilterDto;
+import de.dlh.lhind.ecohack.model.dto.KeyValue;
 import de.dlh.lhind.ecohack.model.dto.QuizDto;
 import de.dlh.lhind.ecohack.model.dto.request.QuestionnaireDto;
 import de.dlh.lhind.ecohack.model.dto.request.ResultDto;
 import de.dlh.lhind.ecohack.model.dto.response.QuizResponse;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.Client;
+import de.dlh.lhind.ecohack.model.entity.User;
 import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
 import de.dlh.lhind.ecohack.repository.UserRepository;
@@ -22,7 +24,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 
 @Service
@@ -34,6 +39,7 @@ public class ClientService implements IClientService {
     private final IUserService userService;
     private final ClientMapper clientMapper;
     private final QuizDto quizDto;
+    private final UserRepository userRepository;
     private final FilterUtil<Client> filterUtil = new FilterUtil<>();
 
     @Override
@@ -136,7 +142,31 @@ public class ClientService implements IClientService {
 
     @Override
     public List<ClientDto> filterClients(FilterDto filterDto) {
-        var specification = filterUtil.filter(filterDto);
+
+        var keyValues = filterDto.getExternalKeyValues().stream().filter(keyValue ->
+                "user".equals(keyValue.getQueryFrom())).toList();
+        var filter = new FilterDto();
+        filter.setInternalKeyValues(keyValues);
+
+        User user = null;
+        if (isNotEmpty(keyValues)){
+            var userFilter = new FilterUtil<User>();
+            var userSpecs = userFilter.filterEqualAnd(filter);
+            var users = userRepository.findAll(userSpecs);
+            if (!users.isEmpty())
+                user = users.get(0);
+            else
+                return new ArrayList<>();
+        }
+
+        if (user != null){
+            var keyValue = new KeyValue();
+            keyValue.setKey("user");
+            keyValue.setValue(user);
+            filterDto.getInternalKeyValues().add(keyValue);
+        }
+
+        var specification = filterUtil.filterEqualAnd(filterDto);
 
         var clients = clientRepository.findAll(specification);
         return clientMapper.clientsToClientsDto(clients);

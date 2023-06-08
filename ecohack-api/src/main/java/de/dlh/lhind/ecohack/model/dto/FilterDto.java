@@ -1,6 +1,6 @@
 package de.dlh.lhind.ecohack.model.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
@@ -8,6 +8,9 @@ import java.util.List;
 @Data
 public class FilterDto {
 
-    @NotEmpty
-    private List<KeyValue> keyValues;
+    @NotNull
+    private List<KeyValue> internalKeyValues;
+
+    @NotNull
+    private List<KeyValue> externalKeyValues;
 }

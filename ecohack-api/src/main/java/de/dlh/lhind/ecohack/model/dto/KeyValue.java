@@ -10,4 +10,6 @@ public class KeyValue {
     private String key;
     @NotNull
     private Object value;
+    @NotBlank
+    private String queryFrom;
 }

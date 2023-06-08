@@ -33,8 +33,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public User saveUser(UserDto userDto) throws BadRequestException {
-        var userId = userDto.getId();
-        if (userId == null)
+        if (userDto.getId() == null)
             return save(userDto);
         return update(userDto);
     }
