@@ -151,7 +151,7 @@ public class ClientService implements IClientService {
         User user = null;
         if (isNotEmpty(keyValues)){
             var userFilter = new FilterUtil<User>();
-            var userSpecs = userFilter.filterEqualAnd(filter);
+            var userSpecs = userFilter.filterWithAndEqualOperators(filter);
             var users = userRepository.findAll(userSpecs);
             if (!users.isEmpty())
                 user = users.get(0);
@@ -166,7 +166,7 @@ public class ClientService implements IClientService {
             filterDto.getInternalKeyValues().add(keyValue);
         }
 
-        var specification = filterUtil.filterEqualAnd(filterDto);
+        var specification = filterUtil.filterWithAndEqualOperators(filterDto);
 
         var clients = clientRepository.findAll(specification);
         return clientMapper.clientsToClientsDto(clients);

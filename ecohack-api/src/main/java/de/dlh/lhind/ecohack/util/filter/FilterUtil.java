@@ -8,37 +8,37 @@ import org.springframework.data.jpa.domain.Specification;
 @Slf4j
 public class FilterUtil<T> {
 
-    private Specification<T> filterEqualByField(KeyValue keyValue) {
+    public Specification<T> filterFieldWithEqualOperator(KeyValue keyValue) {
         return (root, query, builder) -> builder.equal(root.get(keyValue.getKey()), keyValue.getValue());
     }
 
-    private Specification<T> filterLikeField(KeyValue keyValue) {
+    public Specification<T> filterFieldWithLikeOperator(KeyValue keyValue) {
         return (root, query, builder) -> builder.like(root.get(keyValue.getKey()), keyValue.getValue().toString());
     }
 
-    public Specification<T> filterEqualAnd(FilterDto filterDto){
+    public Specification<T> filterWithAndEqualOperators(FilterDto filterDto){
         var keyValues = filterDto.getInternalKeyValues();
         Specification<T> specification = Specification.where(null);
         for (var keyValue : keyValues){
-            specification = specification.and(filterEqualByField(keyValue));
+            specification = specification.and(filterFieldWithEqualOperator(keyValue));
         }
         return specification;
     }
 
-    public Specification<T> filterLikeAnd(FilterDto filterDto){
+    public Specification<T> filterWithAndLikeOperators(FilterDto filterDto){
         var keyValues = filterDto.getInternalKeyValues();
         Specification<T> specification = Specification.where(null);
         for (var keyValue : keyValues){
-            specification = specification.and(filterLikeField(keyValue));
+            specification = specification.and(filterFieldWithLikeOperator(keyValue));
         }
         return specification;
     }
 
-    public Specification<T> filterOr(FilterDto filterDto){
+    public Specification<T> filterWithOrEqualOperators(FilterDto filterDto){
         var keyValues = filterDto.getInternalKeyValues();
         Specification<T> specification = Specification.where(null);
         for (var keyValue : keyValues){
-            specification = specification.or(filterEqualByField(keyValue));
+            specification = specification.or(filterFieldWithEqualOperator(keyValue));
         }
         return specification;
     }
