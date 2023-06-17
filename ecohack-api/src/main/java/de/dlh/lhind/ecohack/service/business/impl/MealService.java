@@ -1,6 +1,5 @@
 package de.dlh.lhind.ecohack.service.business.impl;
 
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.MealMapper;
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
 import de.dlh.lhind.ecohack.model.dto.MealDto;
@@ -13,10 +12,10 @@ import de.dlh.lhind.ecohack.repository.MealRepository;
 import de.dlh.lhind.ecohack.service.business.IClientService;
 import de.dlh.lhind.ecohack.service.business.IMealService;
 import de.dlh.lhind.ecohack.service.business.IProviderService;
-import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +37,6 @@ public class MealService implements IMealService {
     private final IClientService clientService;
     private final IProviderService providerService;
     private final MealMapper mealMapper;
-    private final FilterUtil<Meal> filterUtil = new FilterUtil<>();
 
 
 
@@ -59,7 +57,7 @@ public class MealService implements IMealService {
 
     @Override
     @Transactional
-    public void uploadImage(MultipartFile image, Long mealId, String username) throws IOException, UnAuthorizedException {
+    public void uploadImage(MultipartFile image, Long mealId, String username) throws IOException {
         validateIfMealBelongsToTheLoggedInProvider(username, mealId);
 
         byte[] imageData = image.getBytes();
@@ -68,11 +66,11 @@ public class MealService implements IMealService {
         updateImage(imageBase64, mealId);
     }
 
-    private void validateIfMealBelongsToTheLoggedInProvider(String username, Long mealId) throws UnAuthorizedException {
+    private void validateIfMealBelongsToTheLoggedInProvider(String username, Long mealId) {
         var meal = findEntityById(mealId);
         var provider = providerService.findByEmail(username);
         if (!provider.equals(meal.getFoodProvider()))
-            throw new UnAuthorizedException("Unauthorized! This is not your meal");
+            throw new AccessDeniedException("Unauthorized! This is not your meal");
     }
 
     @Override

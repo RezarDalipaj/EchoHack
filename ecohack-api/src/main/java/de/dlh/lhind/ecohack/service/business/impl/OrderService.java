@@ -12,7 +12,6 @@ import de.dlh.lhind.ecohack.repository.OrderRepository;
 import de.dlh.lhind.ecohack.service.business.IClientService;
 import de.dlh.lhind.ecohack.service.business.IMealService;
 import de.dlh.lhind.ecohack.service.business.IOrderService;
-import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,6 @@ public class OrderService implements IOrderService {
     private final IMealService mealService;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final FilterUtil<Order> filterUtil = new FilterUtil<>();
 
     @Override
     @Transactional

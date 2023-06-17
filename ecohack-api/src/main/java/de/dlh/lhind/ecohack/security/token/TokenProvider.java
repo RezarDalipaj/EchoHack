@@ -44,7 +44,7 @@ public class TokenProvider {
     }
 
     @Transactional
-    public String generateAccessToken(Authentication authentication) throws UnAuthorizedException {
+    public String generateAccessToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         var userDto = userMapper.userDetailsToUserDto(userDetails);
         return buildAndSaveAccessToken(userDto);

@@ -4,8 +4,8 @@ import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.model.dto.request.LoginDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.security.token.TokenProvider;
-import de.dlh.lhind.ecohack.service.security.IAuthService;
 import de.dlh.lhind.ecohack.service.business.IUserService;
+import de.dlh.lhind.ecohack.service.security.IAuthService;
 import de.dlh.lhind.ecohack.util.security.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +21,7 @@ public class AuthService implements IAuthService {
     private final TokenProvider tokenProvider;
 
     @Override
-    public TokenDto login(LoginDto loginDto) throws UnAuthorizedException {
+    public TokenDto login(LoginDto loginDto) {
         String accessToken = authenticateAndGetAccessToken(loginDto);
         var user = userService.getUserByUsername(loginDto.getUsername());
         String refreshToken = tokenProvider.buildAndSaveRefreshToken(user);
@@ -43,7 +43,7 @@ public class AuthService implements IAuthService {
                 .build();
     }
 
-    private String authenticateAndGetAccessToken(LoginDto loginDto) throws UnAuthorizedException {
+    private String authenticateAndGetAccessToken(LoginDto loginDto) {
         var saltedPassword = PasswordUtil.getSaltedPassword(loginDto.getPassword());
         var authentication = authenticationManager.authenticate
         (new UsernamePasswordAuthenticationToken(loginDto.getUsername(), saltedPassword));

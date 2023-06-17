@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface UserMapper {
 
     @Mapping(source = "authorities", target = "role")
-    UserDto userDetailsToUserDto(UserDetails userDetails) throws UnAuthorizedException;
+    UserDto userDetailsToUserDto(UserDetails userDetails);
 
     @Mapping(source = "email", target = "username")
     UserDto userToUserDto(User user);

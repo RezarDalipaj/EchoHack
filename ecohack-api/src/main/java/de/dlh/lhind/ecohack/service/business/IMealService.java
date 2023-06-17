@@ -14,7 +14,7 @@ public interface IMealService {
 
     List<MealDto> findAllByProviderUsername(String username, int pageSize, int pageNumber);
 
-    void uploadImage(MultipartFile image, Long mealId, String username) throws IOException, UnAuthorizedException;
+    void uploadImage(MultipartFile image, Long mealId, String username) throws IOException;
     MealDto findById(Long id);
     Meal findEntityById(Long id);
     MealDto save(MealDto mealDto, String username);

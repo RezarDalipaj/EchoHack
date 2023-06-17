@@ -2,11 +2,9 @@ package de.dlh.lhind.ecohack.service.business.impl;
 
 import de.dlh.lhind.ecohack.mapper.IngredientMapper;
 import de.dlh.lhind.ecohack.model.dto.IngredientDto;
-import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.entity.Ingredient;
 import de.dlh.lhind.ecohack.repository.IngredientRepository;
 import de.dlh.lhind.ecohack.service.business.IIngredientService;
-import de.dlh.lhind.ecohack.util.filter.FilterUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +17,6 @@ import java.util.Optional;
 public class IngredientService implements IIngredientService {
     private final IngredientRepository ingredientRepository;
     private final IngredientMapper ingredientMapper;
-    private final FilterUtil<Ingredient> filterUtil = new FilterUtil<>();
     @Override
     @Transactional
     public IngredientDto save(IngredientDto ingredient) {

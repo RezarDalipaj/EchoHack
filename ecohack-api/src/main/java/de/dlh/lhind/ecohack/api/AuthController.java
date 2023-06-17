@@ -27,7 +27,7 @@ public class AuthController {
     private final ILogoutService logoutService;
 
     @PostMapping("/auth/login")
-    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) throws UnAuthorizedException {
+    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
     }
 

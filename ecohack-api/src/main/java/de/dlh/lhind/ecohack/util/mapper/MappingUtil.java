@@ -34,11 +34,10 @@ public final class MappingUtil {
         return PaymentMethod.CASH;
     }
 
-    public static String mapAuthoritiesToRole(Collection<? extends GrantedAuthority> authorities)
-            throws UnAuthorizedException {
+    public static String mapAuthoritiesToRole(Collection<? extends GrantedAuthority> authorities) {
         return authorities.stream()
                 .map(GrantedAuthority::getAuthority)
                 .findFirst()
-                .orElseThrow(UnAuthorizedException::new);
+                .orElseThrow(NullPointerException::new);
     }
 }

@@ -1,17 +1,15 @@
 package de.dlh.lhind.ecohack.service.business.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ProviderMapper;
 import de.dlh.lhind.ecohack.model.dto.ProviderDto;
 import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.FoodProvider;
 import de.dlh.lhind.ecohack.model.enumeration.Role;
 import de.dlh.lhind.ecohack.repository.FoodProviderRepository;
-import de.dlh.lhind.ecohack.service.security.IAuthService;
 import de.dlh.lhind.ecohack.service.business.IProviderService;
 import de.dlh.lhind.ecohack.service.business.IUserService;
-import de.dlh.lhind.ecohack.util.filter.FilterUtil;
+import de.dlh.lhind.ecohack.service.security.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,12 +22,11 @@ public class ProviderService implements IProviderService {
     private final IAuthService authService;
     private final ProviderMapper providerMapper;
     private final IUserService userService;
-    private final FilterUtil<FoodProvider> filterUtil = new FilterUtil<>();
 
 
     @Override
     @Transactional
-    public TokenDto saveProvider(ProviderDto providerDto) throws BadRequestException, UnAuthorizedException {
+    public TokenDto saveProvider(ProviderDto providerDto) throws BadRequestException {
         validateProviderRegister(providerDto);
         var provider = providerMapper.toProvider(providerDto);
         var userDto = userService.mapEntityToDto(provider.getUser());
