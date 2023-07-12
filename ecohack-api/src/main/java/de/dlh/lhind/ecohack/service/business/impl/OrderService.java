@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,10 +38,10 @@ public class OrderService implements IOrderService {
             var mealEntity = mealService.findEntityById(meal.getMealId());
             order.getMeals().add(mealEntity);
         }
-        var prices = order.getMeals().stream()
+        var price = order.getMeals().stream()
                 .map(Meal::getPrice)
-                .toList();
-        var price = calculatePrice(prices);
+                .mapToDouble(Double::doubleValue)
+                .sum();
         order.setOrderDetail(setOrderDetails(price, orderDto.getComment()));
         var clientDto = new ClientDto();
         clientDto.setId(client.getId());
@@ -59,13 +58,5 @@ public class OrderService implements IOrderService {
         details.setPrice(price);
         details.setOrderDate(LocalDateTime.now());
         return details;
-    }
-
-    private Double calculatePrice(List<Double> prices) {
-        Double finalPrice = 0D;
-        for (var price : prices) {
-            finalPrice += price;
-        }
-        return finalPrice;
     }
 }

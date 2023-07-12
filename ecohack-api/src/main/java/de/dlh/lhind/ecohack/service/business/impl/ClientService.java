@@ -1,7 +1,6 @@
 package de.dlh.lhind.ecohack.service.business.impl;
 
 import de.dlh.lhind.ecohack.exception.custom.BadRequestException;
-import de.dlh.lhind.ecohack.exception.custom.UnAuthorizedException;
 import de.dlh.lhind.ecohack.mapper.ClientMapper;
 import de.dlh.lhind.ecohack.model.dto.ClientDto;
 import de.dlh.lhind.ecohack.model.dto.FilterDto;
@@ -13,7 +12,6 @@ import de.dlh.lhind.ecohack.model.dto.response.TokenDto;
 import de.dlh.lhind.ecohack.model.entity.Client;
 import de.dlh.lhind.ecohack.model.enumeration.PaymentMethod;
 import de.dlh.lhind.ecohack.repository.ClientRepository;
-import de.dlh.lhind.ecohack.repository.UserRepository;
 import de.dlh.lhind.ecohack.service.business.IClientService;
 import de.dlh.lhind.ecohack.service.business.IUserService;
 import de.dlh.lhind.ecohack.service.security.IAuthService;
@@ -34,7 +32,6 @@ public class ClientService implements IClientService {
     private final IUserService userService;
     private final ClientMapper clientMapper;
     private final QuizDto quizDto;
-    private final UserRepository userRepository;
     private final FilterUtil<Client> filterUtil = new FilterUtil<>();
 
     @Override
